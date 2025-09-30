@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root{
-      --primary: #8b0000;   /* rouge foncé */
+      --primary:#8b0000;   /* rouge foncé */
       --secondary: #333333; /* gris pur */
       --accent: #e74c3c;
       --light: #ffffff;
@@ -19,7 +19,6 @@
       --glass: rgba(255,255,255,0.06);
     }
 
-    /* Reset & base */
     *{box-sizing:border-box;margin:0;padding:0;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif}
     body{background:var(--muted);color:var(--secondary);line-height:1.4}
     .container{display:flex;min-height:100vh}
@@ -56,11 +55,18 @@
     .header-controls input{padding:10px;border-radius:6px;border:1px solid #ddd;width:260px}
     .mobile-menu-btn{display:none;font-size:1.5rem;cursor:pointer}
 
-    /* Stats cards */
+    /* Stats cards améliorées */
     .stats-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin:18px 0}
-    .stat-card{background:var(--light);border-radius:10px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,0.06);text-align:center}
+    .stat-card{background:var(--light);border-radius:10px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,0.06);text-align:center;position:relative;overflow:hidden}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--primary)}
+    .stat-card.stock-card::before{background:var(--success)}
+    .stat-card.entry-card::before{background:var(--warning)}
+    .stat-card.exit-card::before{background:var(--danger)}
     .stat-card h3{color:var(--primary);margin-bottom:10px;font-size:0.9rem}
     .stat-card .number{font-size:28px;color:var(--secondary);font-weight:700}
+    .stat-card .trend{font-size:0.8rem;margin-top:5px}
+    .trend.up{color:var(--success)}
+    .trend.down{color:var(--danger)}
 
     /* Form sections */
     .form-section{background:var(--light);padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.04);margin-bottom:18px}
@@ -74,7 +80,108 @@
     .form-group textarea{min-height:90px;resize:vertical}
     .select-hint{font-size:12px;color:#666;margin-top:6px}
 
-    /* Nouveau style pour les fichiers de bons de livraison */
+    /* Galerie stock */
+    .stock-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .vehicle-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid #e0e0e0;
+    }
+
+    .vehicle-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .vehicle-card-photo {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-bottom: 1px solid #eee;
+    }
+
+    .vehicle-card-info {
+      padding: 15px;
+    }
+
+    .vehicle-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .vehicle-card-immat {
+      font-weight: bold;
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+
+    .vehicle-card-days {
+      background: var(--warning);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .vehicle-card-days.old { background: var(--danger); }
+    .vehicle-card-days.new { background: var(--success); }
+
+    .vehicle-card-model {
+      color: var(--secondary);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .vehicle-card-meta {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .vehicle-card-meta i { width: 16px; }
+
+    .vehicle-card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .vehicle-card-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      text-align: center;
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+
+    .vehicle-card-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-exit { background: var(--danger); color: white; }
+    .btn-details { background: var(--primary); color: white; }
+    .btn-history { background: #3498db; color: white; }
+
+    /* Delivery files */
     .delivery-files-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -140,18 +247,8 @@
       min-width: 100px;
       max-width: 100px;
     }
-    .data-table th:nth-child(2),
-    .data-table td:nth-child(2) {
-      width: 120px;
-      min-width: 120px;
-    }
-    .data-table th:nth-child(6),
-    .data-table td:nth-child(6) {
-      width: 150px;
-      min-width: 150px;
-    }
 
-    /* Correction pour les statistiques des types d'interventions */
+    /* Stats tables */
     .stats-table {
       width: 100%;
       border-collapse: collapse;
@@ -175,71 +272,6 @@
     .stats-table td {
       padding: 15px;
     }
-    .stats-table td:nth-child(1) {
-      font-weight: 600;
-      color: var(--secondary);
-    }
-    .stats-table td:nth-child(2) {
-      text-align: center;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    .stats-table td:nth-child(3) {
-      text-align: center;
-      font-weight: 600;
-      color: #27ae60;
-    }
-
-    /* Barre de progression pour visualiser les pourcentages */
-    .percentage-bar {
-      width: 100%;
-      height: 8px;
-      background: #f0f0f0;
-      border-radius: 4px;
-      margin-top: 5px;
-      overflow: hidden;
-    }
-    .percentage-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--accent));
-      border-radius: 4px;
-      transition: width 0.5s ease;
-    }
-
-    /* Correction pour les images de véhicules */
-    .vehicle-photo {
-      width: 100px !important;
-      height: 70px !important;
-      object-fit: cover !important;
-      border-radius: 6px;
-      display: block;
-      background-color: #f5f5f5;
-      border: 1px solid #e0e0e0;
-      transition: none !important;
-      animation: none !important;
-    }
-
-    /* Images des bons de livraison */
-    .delivery-photo {
-      width: 80px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-      margin: 2px;
-    }
-
-    /* Container pour stabiliser l'image */
-    .vehicle-image-container {
-      width: 100px;
-      height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #f5f5f5;
-      border-radius: 6px;
-      overflow: hidden;
-    }
 
     /* Status badges */
     .status-badge{padding:6px 10px;border-radius:20px;font-weight:700;font-size:13px;display:inline-block}
@@ -247,7 +279,7 @@
     .status-termine{background:#d1f7c4;color:#27ae60}
     .status-en-attente{background:#f1f2f6;color:#636e72}
 
-    /* small helpers */
+    /* Helpers */
     .form-actions{margin-top:10px;display:flex;gap:10px;align-items:center}
     .tab-content{display:none}
     .tab-content.active{display:block}
@@ -277,7 +309,14 @@
     /* Photo preview */
     .photo-preview{width:120px;height:90px;border-radius:6px;object-fit:cover;border:2px dashed #ddd;display:block;margin-top:5px}
 
-    /* Modal pour détails véhicule */
+    /* Modals */
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;justify-content:center;align-items:center}
+    .modal-content{background:white;border-radius:10px;padding:20px;width:90%;max-width:600px;max-height:90vh;overflow-y:auto}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #eee;padding-bottom:10px}
+    .modal-close{font-size:1.5rem;cursor:pointer;color:#999}
+    .modal-close:hover{color:#333}
+
+    /* Vehicle details modal */
     .vehicle-details-modal .modal-content {
       max-width: 800px;
     }
@@ -307,11 +346,49 @@
       background: #f9f9f9;
       border-radius: 4px;
     }
-    .intervention-item.en-cours { border-left-color: var(--warning); }
-    .intervention-item.termine { border-left-color: var(--success); }
-    .intervention-item.en-attente { border-left-color: #95a5a6; }
 
-    /* RESPONSIVE AMÉLIORÉ */
+    /* Stock history */
+    .stock-history-item {
+      padding: 10px;
+      border-left: 4px solid #3498db;
+      margin-bottom: 8px;
+      background: #f8f9fa;
+      border-radius: 4px;
+    }
+    .stock-history-item.entry { border-left-color: var(--success); }
+    .stock-history-item.exit { border-left-color: var(--danger); }
+
+    /* Quick actions */
+    .quick-actions{display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap}
+    .quick-action-btn{background:var(--light);border:1px solid #ddd;border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.2s}
+    .quick-action-btn:hover{background:#f0f0f0;transform:translateY(-2px)}
+
+    /* Loading states */
+    .loading{opacity:0.6;pointer-events:none}
+    .spinner{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+    /* View toggle */
+    .view-toggle {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .view-btn {
+      padding: 8px 16px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .view-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* RESPONSIVE */
     @media (max-width: 1200px){
       .main-content{padding:15px 20px}
       .stats-cards{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
@@ -343,97 +420,27 @@
       .header-controls input{width:100%}
       .quick-actions{width:100%;justify-content:center}
       
+      .stock-gallery {
+        grid-template-columns: 1fr;
+      }
+      
       .form-group{min-width:100%}
       .form-section{padding:12px;margin-bottom:12px}
       .form-row{gap:12px;margin-bottom:10px}
       
       .data-table{font-size:0.85rem; table-layout: auto;}
       .data-table th,.data-table td{padding:8px 6px}
-      
-      .data-table th:nth-child(1),
-      .data-table td:nth-child(1),
-      .data-table th:nth-child(2),
-      .data-table td:nth-child(2),
-      .data-table th:nth-child(6),
-      .data-table td:nth-child(6) {
-        width: auto;
-        min-width: auto;
-        max-width: none;
-      }
-
-      .stats-table th, 
-      .stats-table td {
-        padding: 8px 6px;
-        font-size: 0.85rem;
-      }
-      
-      .flux-container{grid-template-columns:1fr;gap:12px}
-      .flux-column{padding:12px}
-      
-      .search-filters{grid-template-columns:1fr;gap:10px}
-      
-      .vehicle-photo{width:80px !important;height:60px !important}
-      .delivery-photo{width:60px;height:45px}
-      
-      .action-buttons{display:flex;flex-direction:column;gap:5px}
-      .btn-edit, .btn-delete, .btn-details{width:100%;margin:2px 0;text-align:center}
     }
 
     @media (max-width: 480px){
       .main-content{padding:10px}
-      .form-section{padding:10px;margin-bottom:10px}
-      .form-row{gap:10px;margin-bottom:8px}
-      
-      .stats-cards{grid-template-columns:1fr 1fr;gap:10px}
-      .stat-card{padding:10px}
-      .stat-card .number{font-size:20px}
-      .stat-card h3{font-size:0.8rem}
-      
-      .header h1{font-size:1.1rem}
-      .header-controls{gap:6px}
-      
-      .data-table{font-size:0.8rem}
-      .data-table th,.data-table td{padding:6px 4px}
-      
-      .stats-table{font-size:0.8rem}
-      .stats-table th, 
-      .stats-table td{padding:6px 4px}
-      
-      .data-table th:nth-child(4), 
-      .data-table td:nth-child(4) {
-        display: none;
+      .stock-gallery {
+        grid-template-columns: 1fr;
       }
-      
-      .modal-content{width:95%;padding:15px;margin:10px}
-      
-      .form-group textarea{min-height:70px}
-      
-      .menu-item{padding:10px 8px;font-size:0.9rem}
+      .vehicle-card-actions {
+        flex-direction: column;
+      }
     }
-
-    @media (max-width: 360px){
-      .stats-cards{grid-template-columns:1fr;gap:8px}
-      .data-table{font-size:0.75rem}
-      .btn{padding:8px 12px;font-size:0.9rem}
-      .form-section h2{font-size:1.1rem}
-    }
-
-    /* Modal */
-    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;justify-content:center;align-items:center}
-    .modal-content{background:white;border-radius:10px;padding:20px;width:90%;max-width:600px;max-height:90vh;overflow-y:auto}
-    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #eee;padding-bottom:10px}
-    .modal-close{font-size:1.5rem;cursor:pointer;color:#999}
-    .modal-close:hover{color:#333}
-
-    /* Quick actions */
-    .quick-actions{display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap}
-    .quick-action-btn{background:var(--light);border:1px solid #ddd;border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.2s}
-    .quick-action-btn:hover{background:#f0f0f0;transform:translateY(-2px)}
-
-    /* Loading states */
-    .loading{opacity:0.6;pointer-events:none}
-    .spinner{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite}
-    @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
   </style>
 </head>
   
@@ -479,20 +486,20 @@
           <div class="form-group">
             <label for="edit-mecaniciens">Mécaniciens (sélection multiple)</label>
             <select id="edit-mecaniciens" multiple>
-              <option value="1">YOBOUET SYLVIN</option>
-              <option value="2">KHALIL HUSSEIN</option>
-              <option value="3">NIANKINE YOUSSOUF</option>
-              <option value="4">OUATTARA ISSIF</option>
-              <option value="5">BABA DRAMANE</option>
-              <option value="6">KONE SAIDOU</option>
-              <option value="7">TRAORE ABDELATIF</option>
-              <option value="8">KOUAME K WILLIAM</option>
-              <option value="9">DIABATE HASSAN</option>
+              <option value="1"> SYLVIN</option>
+              <option value="2"> HUSSEIN</option>
+              <option value="3">YOUSSOUF</option>
+              <option value="4"> ISSIF</option>
+              <option value="5">BABA</option>
+              <option value="6"> SAID</option>
+              <option value="7">ABDELATIF</option>
+              <option value="8">WILLIAM</option>
+              <option value="9"> HASSAN</option>
               <option value="10">MOHAMED</option>
-              <option value="11">MANBONNE A AZIZ</option>
-              <option value="12">TOUVOLI KEVIN</option>
-              <option value="13">TOURE OTHNIEL</option>
-              <option value="14">VEHI EBENEZER</option>
+              <option value="11"> AZIZ</option>
+              <option value="12"> KEVIN</option>
+              <option value="13">TOURE</option>
+              <option value="14"> EBENEZER</option>
             </select>
             <div class="select-hint">Ctrl/Cmd + clic pour multi-sélection (ou appuyez longuement sur mobile)</div>
           </div>
@@ -552,6 +559,65 @@
     </div>
   </div>
 
+  <!-- Modal gestion stock -->
+  <div id="stock-management-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Gestion du Stock</h2>
+        <span class="modal-close">&times;</span>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="stock-action">Action</label>
+          <select id="stock-action">
+            <option value="add">Ajouter au stock</option>
+            <option value="remove">Retirer du stock</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="stock-vehicle">Véhicule</label>
+          <select id="stock-vehicle">
+            <option value="">Sélectionner un véhicule</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="stock-reason">Raison</label>
+          <select id="stock-reason">
+            <option value="reparation">Réparation</option>
+            <option value="entretien">Entretien</option>
+            <option value="stockage">Stockage</option>
+            <option value="vente">Préparation vente</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="stock-notes">Notes</label>
+          <textarea id="stock-notes" placeholder="Notes supplémentaires..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="confirmStockAction()">Confirmer</button>
+        <button class="btn" onclick="closeModal('stock-management-modal')">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal historique stock -->
+  <div id="stock-history-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Historique du Stock</h2>
+        <span class="modal-close">&times;</span>
+      </div>
+      <div id="stock-history-content">
+        <!-- Contenu chargé dynamiquement -->
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <!-- Sidebar -->
     <aside class="sidebar" aria-label="Navigation principale">
@@ -559,6 +625,7 @@
 
       <nav class="nav">
         <div class="menu-item active" data-tab="dashboard"><i class="fas fa-chart-bar"></i><span>Tableau de bord</span></div>
+        <div class="menu-item" data-tab="stock"><i class="fas fa-warehouse"></i><span>Stock Garage</span></div>
         <div class="menu-item" data-tab="vehicles"><i class="fas fa-car"></i><span>Véhicules</span></div>
         <div class="menu-item" data-tab="interventions"><i class="fas fa-tools"></i><span>Interventions</span></div>
         <div class="menu-item" data-tab="flux"><i class="fas fa-exchange-alt"></i><span>Flux véhicules</span></div>
@@ -583,6 +650,9 @@
             <div class="quick-action-btn" id="quick-add-intervention">
               <i class="fas fa-wrench"></i> Intervention
             </div>
+            <div class="quick-action-btn" id="quick-manage-stock">
+              <i class="fas fa-warehouse"></i> Stock
+            </div>
           </div>
         </div>
       </header>
@@ -590,21 +660,30 @@
       <!-- Dashboard -->
       <section id="dashboard-tab" class="tab-content active">
         <div class="stats-cards">
-          <div class="stat-card">
-            <h3>Véhicules au garage (Stock)</h3>
-            <div class="number" id="vehicles-stock">0</div>
+          <div class="stat-card stock-card">
+            <h3>Véhicules en stock</h3>
+            <div class="number" id="current-stock-count">0</div>
+            <div class="trend" id="stock-trend"></div>
+            <button class="btn btn-sm" onclick="switchTab('stock')" style="margin-top:10px;">Voir le stock</button>
+          </div>
+          <div class="stat-card entry-card">
+            <h3>Entrées aujourd'hui</h3>
+            <div class="number" id="today-entries">0</div>
+          </div>
+          <div class="stat-card exit-card">
+            <h3>Sorties aujourd'hui</h3>
+            <div class="number" id="today-exits">0</div>
           </div>
           <div class="stat-card">
-            <h3>Véhicules entrés aujourd'hui</h3>
-            <div class="number" id="vehicles-entered-today">0</div>
+            <h3>Ancienneté moyenne</h3>
+            <div class="number" id="average-stay">0j</div>
           </div>
-          <div class="stat-card">
-            <h3>Véhicules sortis aujourd'hui</h3>
-            <div class="number" id="vehicles-exited-today">0</div>
-          </div>
-          <div class="stat-card">
-            <h3>Interventions en cours</h3>
-            <div class="number" id="interventions-in-progress">0</div>
+        </div>
+
+        <div class="form-section">
+          <h2>Véhicules récemment ajoutés au stock</h2>
+          <div id="recent-stock-preview" class="stock-gallery">
+            <!-- Prévisualisation des véhicules récents -->
           </div>
         </div>
 
@@ -654,6 +733,82 @@
             </thead>
             <tbody id="journal-complet"></tbody>
           </table>
+        </div>
+      </section>
+
+      <!-- Stock Garage -->
+      <section id="stock-tab" class="tab-content">
+        <div class="form-section">
+          <h2>Gestion du Stock Actuel</h2>
+          
+          <div class="quick-actions">
+            <div class="quick-action-btn" onclick="openStockManagement()">
+              <i class="fas fa-plus"></i> Gérer le stock
+            </div>
+            <div class="quick-action-btn" onclick="exportStockReport()">
+              <i class="fas fa-file-export"></i> Exporter rapport
+            </div>
+            <div class="quick-action-btn" onclick="showStockHistory()">
+              <i class="fas fa-history"></i> Historique complet
+            </div>
+          </div>
+
+          <div class="search-filters">
+            <input type="text" id="stock-search" placeholder="Rechercher immatriculation..." />
+            <select id="stock-status-filter">
+              <option value="">Tous les statuts</option>
+              <option value="en-attente">En attente</option>
+              <option value="en-cours">En réparation</option>
+              <option value="termine">Prêt à sortir</option>
+            </select>
+            <input type="number" id="stock-days-filter" placeholder="Âge min (jours)" />
+            <button class="btn btn-primary" onclick="filterStock()">Filtrer</button>
+            <button class="btn" onclick="resetStockFilter()">Réinitialiser</button>
+          </div>
+
+          <div class="view-toggle">
+            <button class="view-btn active" onclick="setStockView('gallery')">
+              <i class="fas fa-th"></i> Galerie
+            </button>
+            <button class="view-btn" onclick="setStockView('table')">
+              <i class="fas fa-table"></i> Tableau
+            </button>
+          </div>
+
+          <!-- Vue Galerie -->
+          <div id="stock-gallery-view">
+            <div class="stock-gallery" id="stock-gallery">
+              <!-- Cartes véhicules chargées dynamiquement -->
+            </div>
+          </div>
+
+          <!-- Vue Tableau -->
+          <div id="stock-table-view" style="display: none;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Photo</th>
+                  <th>Immatriculation</th>
+                  <th>Modèle</th>
+                  <th>Date entrée</th>
+                  <th>Jours présents</th>
+                  <th>Dernière intervention</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="stock-table-body"></tbody>
+            </table>
+          </div>
+
+          <div id="stock-empty" style="display: none; text-align: center; padding: 40px;">
+            <i class="fas fa-warehouse" style="font-size: 48px; color: #ccc; margin-bottom: 15px;"></i>
+            <h3 style="color: #666;">Aucun véhicule en stock</h3>
+            <p style="color: #888;">Ajoutez des véhicules au stock pour commencer</p>
+            <button class="btn btn-primary" onclick="openStockManagement()" style="margin-top: 15px;">
+              <i class="fas fa-plus"></i> Ajouter au stock
+            </button>
+          </div>
         </div>
       </section>
 
@@ -750,20 +905,20 @@
               <div class="form-group">
                 <label for="mecaniciens">Mécaniciens (sélection multiple)</label>
                 <select id="mecaniciens" multiple>
-                  <option value="1">YOBOUET SYLVIN</option>
-                  <option value="2">KHALIL HUSSEIN</option>
-                  <option value="3">NIANKINE YOUSSOUF</option>
-                  <option value="4">OUATTARA ISSIF</option>
-                  <option value="5">BABA DRAMANE</option>
-                  <option value="6">KONE SAIDOU</option>
-                  <option value="7">TRAORE ABDELATIF</option>
-                  <option value="8">KOUAME K WILLIAM</option>
-                  <option value="9">DIABATE HASSAN</option>
+                  <option value="1"> SYLVIN</option>
+                  <option value="2"> HUSSEIN</option>
+                  <option value="3"> YOUSSOUF</option>
+                  <option value="4"> ISSIF</option>
+                  <option value="5"> DRAMANE</option>
+                  <option value="6"> SAIDOU</option>
+                  <option value="7">ABDELATIF</option>
+                  <option value="8"> WILLIAM</option>
+                  <option value="9"> HASSAN</option>
                   <option value="10">MOHAMED</option>
-                  <option value="11">MANBONNE A AZIZ</option>
-                  <option value="12">TOUVOLI KEVIN</option>
-                  <option value="13">TOURE OTHNIEL</option>
-                  <option value="14">VEHI EBENEZER</option>
+                  <option value="11">AZIZ</option>
+                  <option value="12">KEVIN</option>
+                  <option value="13">TOURE </option>
+                  <option value="14"> EBENEZER</option>
                 </select>
                 <div class="select-hint">Ctrl/Cmd + clic pour multi-sélection (ou appuyez longuement sur mobile)</div>
               </div>
@@ -929,7 +1084,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
 <script>
-  // Configuration Supabase sécurisée
+  // ==================== CONFIGURATION SUPABASE ====================
   const getSupabaseConfig = () => {
     const supabaseUrl = window.VITE_SUPABASE_URL || 'https://xexmwdaeoxizvqecrmlo.supabase.co';
     const supabaseKey = window.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleG13ZGFlb3hpenZxZWNybWxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2OTg5OTAsImV4cCI6MjA3NDI3NDk5MH0.nrMn4X0KFJISudffGDJZ0SM7XxKD2wOG2xOUMNsnWQo';
@@ -950,29 +1105,612 @@
 
   const supabase = window.supabase.createClient(config.supabaseUrl, config.supabaseKey);
 
-  // Local state
+  // ==================== STATE GLOBAL ====================
   let vehicles = [];
   let interventions = [];
   let currentEditingInterventionId = null;
   let deliveryFiles = [];
   let garageStock = [];
+  let stockHistory = [];
+  let currentStockView = 'gallery';
 
-  // DOM elems
-  const notification = document.getElementById('notification');
+  // ==================== FONCTION SWITCHTAB GARANTIE ====================
+  function switchTab(tabName){
+    console.log('🔧 Navigation vers:', tabName);
+    
+    // Masquer tous les onglets
+    document.querySelectorAll('.tab-content').forEach(t => {
+        t.classList.remove('active');
+    });
+    
+    // Afficher l'onglet sélectionné
+    const targetTab = document.getElementById(tabName + '-tab');
+    if(targetTab) {
+        targetTab.classList.add('active');
+    } else {
+        console.error('❌ Onglet non trouvé:', tabName + '-tab');
+        // Fallback vers le dashboard
+        const dashboardTab = document.getElementById('dashboard-tab');
+        if (dashboardTab) {
+            dashboardTab.classList.add('active');
+        }
+    }
+    
+    // Mettre à jour le titre de la page
+    updatePageTitle(tabName);
+  }
 
-  // Debounce pour la recherche
-  let searchTimeout;
+  function updatePageTitle(tabName) {
+    const titles = {
+        'dashboard': 'Tableau de Bord',
+        'stock': 'Stock Garage', 
+        'vehicles': 'Véhicules',
+        'interventions': 'Interventions',
+        'flux': 'Flux Véhicules',
+        'search': 'Recherche',
+        'stats': 'Statistiques'
+    };
+    
+    const title = titles[tabName] || 'Garage HR';
+    document.querySelector('.header h1').textContent = title + ' - Garage HR';
+  }
 
-  // Init when DOM ready
-  document.addEventListener('DOMContentLoaded', () => {
-    initApp();
-    loadData();
-    setupEventListeners();
-  });
+  // ==================== SYSTÈME DE STOCK AMÉLIORÉ ====================
 
-  // ==================== CORRECTIONS APPLIQUÉES ====================
+  async function loadStockData() {
+    try {
+      // Charger le stock actuel avec les données des véhicules
+      const { data: stockData, error } = await supabase
+        .from('garage_stock')
+        .select(`
+          *,
+          vehicles (
+            immatriculation,
+            modele,
+            couleur,
+            photo,
+            proprietaire,
+            telephone
+          )
+        `)
+        .is('exit_date', null)
+        .order('entry_date', { ascending: false });
 
-  // 1. CORRECTION DES MESSAGES DE SUCCÈS/ERREUR EN DOUBLE
+      if (error) throw error;
+
+      // Charger l'historique du stock
+      const { data: historyData, error: historyError } = await supabase
+        .from('garage_stock')
+        .select(`
+          *,
+          vehicles (
+            immatriculation,
+            modele
+          )
+        `)
+        .order('entry_date', { ascending: false })
+        .limit(100);
+
+      if (!historyError) {
+        stockHistory = historyData || [];
+      }
+
+      garageStock = stockData || [];
+      displayStock();
+      updateStockStats();
+      
+    } catch (error) {
+      console.error('Erreur chargement stock:', error);
+      // Fallback vers le stock local
+      loadLocalStock();
+    }
+  }
+
+  function displayStock() {
+    const filteredStock = filterStockItems(garageStock);
+    
+    if (filteredStock.length === 0) {
+      document.getElementById('stock-gallery').innerHTML = '';
+      document.getElementById('stock-table-body').innerHTML = '';
+      document.getElementById('stock-empty').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('stock-empty').style.display = 'none';
+    
+    if (currentStockView === 'gallery') {
+      displayStockGallery(filteredStock);
+    } else {
+      displayStockTable(filteredStock);
+    }
+  }
+
+  function displayStockGallery(stockItems) {
+    const gallery = document.getElementById('stock-gallery');
+    gallery.innerHTML = '';
+
+    stockItems.forEach(item => {
+      const vehicle = item.vehicles;
+      if (!vehicle) return;
+
+      const daysInStock = calculateDaysInStock(item.entry_date);
+      const lastIntervention = getLastIntervention(item.vehicle_id);
+      const status = getVehicleStatus(item.vehicle_id);
+
+      const card = document.createElement('div');
+      card.className = 'vehicle-card';
+      card.innerHTML = `
+        <img src="${vehicle.photo}" class="vehicle-card-photo" alt="${vehicle.immatriculation}" 
+             onerror="this.src='https://via.placeholder.com/280x180?text=Vehicle'">
+        <div class="vehicle-card-info">
+          <div class="vehicle-card-header">
+            <div class="vehicle-card-immat">${vehicle.immatriculation}</div>
+            <div class="vehicle-card-days ${getDaysClass(daysInStock)}">${daysInStock}j</div>
+          </div>
+          <div class="vehicle-card-model">${vehicle.modele} - ${vehicle.couleur}</div>
+          <div class="vehicle-card-meta">
+            <i class="fas fa-calendar-alt"></i>Entré le: ${formatDate(item.entry_date)}
+          </div>
+          <div class="vehicle-card-meta">
+            <i class="fas fa-user"></i>${vehicle.proprietaire || 'Propriétaire non renseigné'}
+          </div>
+          <div class="vehicle-card-meta">
+            <i class="fas fa-tools"></i>Dernière: ${lastIntervention}
+          </div>
+          <div class="vehicle-card-meta">
+            <i class="fas fa-info-circle"></i>Statut: <span class="status-badge status-${status}">${status}</span>
+          </div>
+          <div class="vehicle-card-actions">
+            <button class="vehicle-card-btn btn-exit" onclick="removeFromStock('${item.id}')">
+              <i class="fas fa-sign-out-alt"></i> Sortie
+            </button>
+            <button class="vehicle-card-btn btn-details" onclick="showVehicleDetails('${item.vehicle_id}')">
+              <i class="fas fa-eye"></i> Détails
+            </button>
+            <button class="vehicle-card-btn btn-history" onclick="showVehicleStockHistory('${item.vehicle_id}')">
+              <i class="fas fa-history"></i> Historique
+            </button>
+          </div>
+        </div>
+      `;
+      gallery.appendChild(card);
+    });
+  }
+
+  function displayStockTable(stockItems) {
+    const tableBody = document.getElementById('stock-table-body');
+    tableBody.innerHTML = '';
+
+    stockItems.forEach(item => {
+      const vehicle = item.vehicles;
+      if (!vehicle) return;
+
+      const daysInStock = calculateDaysInStock(item.entry_date);
+      const lastIntervention = getLastIntervention(item.vehicle_id);
+      const status = getVehicleStatus(item.vehicle_id);
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><img src="${vehicle.photo}" class="vehicle-photo" alt="photo" onerror="this.src='https://via.placeholder.com/100x70?text=Vehicle'"></td>
+        <td>${vehicle.immatriculation}</td>
+        <td>${vehicle.modele}</td>
+        <td>${formatDate(item.entry_date)}</td>
+        <td>${daysInStock} jours</td>
+        <td>${lastIntervention}</td>
+        <td><span class="status-badge status-${status}">${status}</span></td>
+        <td class="action-buttons">
+          <button class="btn-edit" onclick="showVehicleDetails('${vehicle.id}')">Détails</button>
+          <button class="btn-delete" onclick="removeFromStock('${item.id}')">Sortie</button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
+
+  function filterStockItems(stockItems) {
+    const searchTerm = document.getElementById('stock-search').value.toLowerCase();
+    const statusFilter = document.getElementById('stock-status-filter').value;
+    const daysFilter = parseInt(document.getElementById('stock-days-filter').value) || 0;
+
+    return stockItems.filter(item => {
+      const vehicle = item.vehicles;
+      if (!vehicle) return false;
+
+      // Filtre recherche
+      if (searchTerm && !vehicle.immatriculation.toLowerCase().includes(searchTerm)) {
+        return false;
+      }
+
+      // Filtre statut
+      if (statusFilter && getVehicleStatus(item.vehicle_id) !== statusFilter) {
+        return false;
+      }
+
+      // Filtre ancienneté
+      if (daysFilter > 0 && calculateDaysInStock(item.entry_date) < daysFilter) {
+        return false;
+      }
+
+      return true;
+    });
+  }
+
+  function filterStock() {
+    displayStock();
+  }
+
+  function resetStockFilter() {
+    document.getElementById('stock-search').value = '';
+    document.getElementById('stock-status-filter').value = '';
+    document.getElementById('stock-days-filter').value = '';
+    displayStock();
+  }
+
+  function setStockView(view) {
+    currentStockView = view;
+    
+    // Mettre à jour les boutons
+    document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Afficher/masquer les vues
+    document.getElementById('stock-gallery-view').style.display = view === 'gallery' ? 'block' : 'none';
+    document.getElementById('stock-table-view').style.display = view === 'table' ? 'block' : 'none';
+    
+    displayStock();
+  }
+
+  async function removeFromStock(stockId) {
+    if (!confirm("Confirmer la sortie de ce véhicule du stock?")) return;
+
+    const today = new Date().toISOString().split('T')[0];
+    
+    try {
+      const { error } = await supabase
+        .from('garage_stock')
+        .update({ 
+          exit_date: today, 
+          exit_reason: 'manual_removal',
+          notes: 'Sortie manuelle du stock'
+        })
+        .eq('id', stockId);
+
+      if (error) throw error;
+
+      showNotification("Véhicule retiré du stock avec succès");
+      await loadStockData();
+      updateStockStats();
+      
+    } catch (error) {
+      console.error('Erreur retrait stock:', error);
+      showNotification("Erreur lors du retrait du stock", "error");
+    }
+  }
+
+  function openStockManagement() {
+    const vehicleSelect = document.getElementById('stock-vehicle');
+    vehicleSelect.innerHTML = '<option value="">Sélectionner un véhicule</option>';
+    
+    // Ajouter les véhicules non déjà en stock
+    const vehiclesInStock = garageStock.map(item => item.vehicle_id);
+    vehicles.forEach(vehicle => {
+      if (!vehiclesInStock.includes(vehicle.id)) {
+        const option = document.createElement('option');
+        option.value = vehicle.id;
+        option.textContent = `${vehicle.immatriculation} - ${vehicle.modele}`;
+        vehicleSelect.appendChild(option);
+      }
+    });
+
+    document.getElementById('stock-management-modal').style.display = 'flex';
+  }
+
+  async function confirmStockAction() {
+    const action = document.getElementById('stock-action').value;
+    const vehicleId = document.getElementById('stock-vehicle').value;
+    const reason = document.getElementById('stock-reason').value;
+    const notes = document.getElementById('stock-notes').value;
+
+    if (!vehicleId) {
+      showNotification("Veuillez sélectionner un véhicule", "error");
+      return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    const vehicle = vehicles.find(v => v.id === vehicleId);
+
+    try {
+      if (action === 'add') {
+        // Ajouter au stock
+        const { error } = await supabase
+          .from('garage_stock')
+          .insert([{
+            vehicle_id: vehicleId,
+            entry_date: today,
+            entry_reason: reason,
+            notes: notes
+          }]);
+
+        if (error) throw error;
+
+        showNotification(`Véhicule ${vehicle.immatriculation} ajouté au stock`);
+
+      } else {
+        // Retirer du stock
+        const { error } = await supabase
+          .from('garage_stock')
+          .update({ 
+            exit_date: today, 
+            exit_reason: reason,
+            notes: notes
+          })
+          .eq('vehicle_id', vehicleId)
+          .is('exit_date', null);
+
+        if (error) throw error;
+
+        showNotification(`Véhicule ${vehicle.immatriculation} retiré du stock`);
+      }
+
+      closeModal('stock-management-modal');
+      await loadStockData();
+      updateStockStats();
+
+    } catch (error) {
+      console.error('Erreur gestion stock:', error);
+      showNotification("Erreur lors de la gestion du stock", "error");
+    }
+  }
+
+  function showStockHistory() {
+    const historyContent = document.getElementById('stock-history-content');
+    
+    if (stockHistory.length === 0) {
+      historyContent.innerHTML = '<p style="text-align: center; padding: 20px;">Aucun historique de stock disponible</p>';
+    } else {
+      let html = '<div style="max-height: 400px; overflow-y: auto;">';
+      
+      stockHistory.forEach(item => {
+        const vehicle = item.vehicles;
+        if (!vehicle) return;
+
+        const isEntry = !item.exit_date;
+        const date = isEntry ? item.entry_date : item.exit_date;
+        const typeClass = isEntry ? 'entry' : 'exit';
+        const icon = isEntry ? 'fa-sign-in-alt' : 'fa-sign-out-alt';
+        const text = isEntry ? 'Entrée' : 'Sortie';
+
+        html += `
+          <div class="stock-history-item ${typeClass}">
+            <div style="display: flex; justify-content: between; align-items: center;">
+              <div>
+                <i class="fas ${icon}" style="margin-right: 8px;"></i>
+                <strong>${vehicle.immatriculation}</strong> - ${vehicle.modele}
+              </div>
+              <span style="font-size: 0.9rem; color: #666;">${formatDate(date)}</span>
+            </div>
+            <div style="margin-top: 5px; font-size: 0.9rem;">
+              ${text} - Raison: ${item.entry_reason || item.exit_reason}
+              ${item.notes ? `<br><em>${item.notes}</em>` : ''}
+            </div>
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+      historyContent.innerHTML = html;
+    }
+
+    document.getElementById('stock-history-modal').style.display = 'flex';
+  }
+
+  function showVehicleStockHistory(vehicleId) {
+    const vehicle = vehicles.find(v => v.id === vehicleId);
+    if (!vehicle) return;
+
+    const vehicleHistory = stockHistory.filter(item => item.vehicle_id === vehicleId);
+    
+    let html = `
+      <h3 style="margin-bottom: 15px;">Historique stock - ${vehicle.immatriculation}</h3>
+      <div style="max-height: 400px; overflow-y: auto;">
+    `;
+    
+    if (vehicleHistory.length === 0) {
+      html += '<p style="text-align: center; padding: 20px;">Aucun historique pour ce véhicule</p>';
+    } else {
+      vehicleHistory.forEach(item => {
+        const isEntry = !item.exit_date;
+        const date = isEntry ? item.entry_date : item.exit_date;
+        const typeClass = isEntry ? 'entry' : 'exit';
+        const icon = isEntry ? 'fa-sign-in-alt' : 'fa-sign-out-alt';
+        const text = isEntry ? 'Entrée' : 'Sortie';
+
+        html += `
+          <div class="stock-history-item ${typeClass}">
+            <div style="display: flex; justify-content: between; align-items: center;">
+              <div>
+                <i class="fas ${icon}" style="margin-right: 8px;"></i>
+                <strong>${text}</strong>
+              </div>
+              <span style="font-size: 0.9rem; color: #666;">${formatDate(date)}</span>
+            </div>
+            <div style="margin-top: 5px; font-size: 0.9rem;">
+              Raison: ${item.entry_reason || item.exit_reason}
+              ${item.notes ? `<br><em>${item.notes}</em>` : ''}
+            </div>
+          </div>
+        `;
+      });
+    }
+    
+    html += '</div>';
+    
+    const historyContent = document.getElementById('stock-history-content');
+    historyContent.innerHTML = html;
+    document.getElementById('stock-history-modal').style.display = 'flex';
+  }
+
+  function updateStockStats() {
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Stats basiques
+    document.getElementById('current-stock-count').textContent = garageStock.length;
+    
+    // Entrées/sorties du jour
+    const todayEntries = garageStock.filter(item => item.entry_date === today).length;
+    const todayExits = stockHistory.filter(item => item.exit_date === today).length;
+    
+    document.getElementById('today-entries').textContent = todayEntries;
+    document.getElementById('today-exits').textContent = todayExits;
+    
+    // Ancienneté moyenne
+    const totalDays = garageStock.reduce((sum, item) => {
+      return sum + calculateDaysInStock(item.entry_date);
+    }, 0);
+    
+    const averageDays = garageStock.length > 0 ? Math.round(totalDays / garageStock.length) : 0;
+    document.getElementById('average-stay').textContent = averageDays + 'j';
+    
+    // Tendances (comparaison avec hier)
+    updateStockTrends();
+    
+    // Mettre à jour la prévisualisation des véhicules récents
+    updateRecentStockPreview();
+  }
+
+  function updateStockTrends() {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    
+    const yesterdayStock = stockHistory.filter(item => 
+      item.entry_date <= yesterdayStr && (!item.exit_date || item.exit_date > yesterdayStr)
+    ).length;
+    
+    const currentStock = garageStock.length;
+    const difference = currentStock - yesterdayStock;
+    
+    const trendElement = document.getElementById('stock-trend');
+    if (difference > 0) {
+      trendElement.innerHTML = `<span class="trend up">+${difference} vs hier</span>`;
+    } else if (difference < 0) {
+      trendElement.innerHTML = `<span class="trend down">${difference} vs hier</span>`;
+    } else {
+      trendElement.innerHTML = `<span class="trend">Stable vs hier</span>`;
+    }
+  }
+
+  function updateRecentStockPreview() {
+    const recentContainer = document.getElementById('recent-stock-preview');
+    const recentStock = garageStock.slice(0, 4); // 4 véhicules les plus récents
+    
+    if (recentStock.length === 0) {
+      recentContainer.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">Aucun véhicule en stock</p>';
+      return;
+    }
+    
+    recentContainer.innerHTML = '';
+    
+    recentStock.forEach(item => {
+      const vehicle = item.vehicles;
+      if (!vehicle) return;
+      
+      const daysInStock = calculateDaysInStock(item.entry_date);
+      
+      const card = document.createElement('div');
+      card.className = 'vehicle-card';
+      card.style.transform = 'scale(0.95)';
+      card.innerHTML = `
+        <img src="${vehicle.photo}" class="vehicle-card-photo" alt="${vehicle.immatriculation}" 
+             onerror="this.src='https://via.placeholder.com/280x180?text=Vehicle'">
+        <div class="vehicle-card-info">
+          <div class="vehicle-card-header">
+            <div class="vehicle-card-immat">${vehicle.immatriculation}</div>
+            <div class="vehicle-card-days ${getDaysClass(daysInStock)}">${daysInStock}j</div>
+          </div>
+          <div class="vehicle-card-model">${vehicle.modele}</div>
+          <div class="vehicle-card-meta">
+            <i class="fas fa-calendar-alt"></i>Entré le: ${formatDate(item.entry_date)}
+          </div>
+          <button class="vehicle-card-btn btn-details" onclick="showVehicleDetails('${item.vehicle_id}')" style="margin-top: 8px;">
+            <i class="fas fa-eye"></i> Voir détails
+          </button>
+        </div>
+      `;
+      recentContainer.appendChild(card);
+    });
+  }
+
+  function calculateDaysInStock(entryDate) {
+    const entry = new Date(entryDate);
+    const today = new Date();
+    const diffTime = today - entry;
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  function getDaysClass(days) {
+    if (days > 30) return 'old';
+    if (days < 7) return 'new';
+    return '';
+  }
+
+  function getLastIntervention(vehicleId) {
+    const vehicleInterventions = interventions
+      .filter(i => i.vehicule_id === vehicleId)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    return vehicleInterventions.length > 0 
+      ? `${vehicleInterventions[0].type} (${formatDate(vehicleInterventions[0].date)})`
+      : 'Aucune intervention';
+  }
+
+  function getVehicleStatus(vehicleId) {
+    const vehicleInterventions = interventions.filter(i => i.vehicule_id === vehicleId);
+    if (vehicleInterventions.length === 0) return 'en-attente';
+    
+    const lastIntervention = vehicleInterventions.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+    return lastIntervention.statut;
+  }
+
+  function exportStockReport() {
+    const today = new Date().toISOString().split('T')[0];
+    let csvContent = "Immatriculation,Modèle,Couleur,Propriétaire,Date entrée,Jours présents,Dernière intervention,Statut\n";
+    
+    garageStock.forEach(item => {
+      const vehicle = item.vehicles;
+      if (!vehicle) return;
+      
+      const daysInStock = calculateDaysInStock(item.entry_date);
+      const lastIntervention = getLastIntervention(item.vehicle_id);
+      const status = getVehicleStatus(item.vehicle_id);
+      
+      csvContent += `"${vehicle.immatriculation}","${vehicle.modele}","${vehicle.couleur}","${vehicle.proprietaire || ''}","${item.entry_date}",${daysInStock},"${lastIntervention}","${status}"\n`;
+    });
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `stock_garage_${today}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showNotification("Rapport de stock exporté avec succès");
+  }
+
+  function loadLocalStock() {
+    const savedStock = localStorage.getItem('garageStock');
+    if (savedStock) {
+      garageStock = JSON.parse(savedStock);
+    }
+    displayStock();
+    updateStockStats();
+  }
+
+  // ==================== FONCTIONS EXISTANTES ====================
+
   async function safeSupabaseOperation(operation, successMessage = null, loadingButton = null) {
     if (loadingButton) {
       setButtonLoading(loadingButton, true);
@@ -981,27 +1719,8 @@
     try {
       const { data, error } = await operation;
       
-      if (error) {
-        if (error.code === 'PGRST116') {
-          if (successMessage) showNotification("Aucun résultat trouvé", "warning");
-          return null;
-        }
-        if (error.code === '42501') {
-          if (successMessage) showNotification("Permission refusée", "error");
-          return null;
-        }
-        if (error.message.includes('JWT')) {
-          if (successMessage) showNotification("Session expirée, veuillez vous reconnecter", "error");
-          return null;
-        }
-        if (error.message.includes('network') || !navigator.onLine) {
-          if (successMessage) showNotification("Connexion internet perdue", "error");
-          return null;
-        }
-        throw error;
-      }
+      if (error) throw error;
       
-      // CORRECTION : Afficher le message de succès UNIQUEMENT si l'opération a réussi
       if (successMessage && data !== null) {
         showNotification(successMessage);
       }
@@ -1009,14 +1728,7 @@
       
     } catch (error) {
       console.error('Operation failed:', error);
-      
-      // CORRECTION : Afficher UN SEUL message d'erreur
-      if (navigator.onLine) {
-        showNotification("Erreur serveur, veuillez réessayer", "error");
-      } else {
-        showNotification("Connexion internet perdue", "error");
-      }
-      
+      showNotification("Erreur serveur, veuillez réessayer", "error");
       return null;
     } finally {
       if (loadingButton) {
@@ -1024,267 +1736,6 @@
       }
     }
   }
-
-  // 2. CORRECTION DE LA MODIFICATION DES INTERVENTIONS
-  async function updateIntervention(){
-    const id = document.getElementById('edit-intervention-id').value;
-    const vehiculeId = document.getElementById('edit-vehicule-intervention').value;
-    const date = document.getElementById('edit-date-intervention').value;
-    const type = document.getElementById('edit-type-intervention').value.trim();
-    const mecaniciensElements = document.getElementById('edit-mecaniciens');
-    const pieces = document.getElementById('edit-pieces').value.trim();
-    const statut = document.getElementById('edit-statut').value;
-    const observations = document.getElementById('edit-observations').value.trim();
-    const submitButton = document.querySelector('#edit-intervention-form button[type="submit"]');
-
-    if(!vehiculeId){ showNotification("Sélectionner un véhicule", "error"); return; }
-    if(!date || !type){ showNotification("Date et type requis", "error"); return; }
-
-    const mecaniciens = Array.from(mecaniciensElements.selectedOptions).map(o => o.text);
-    const vehicle = vehicles.find(v => v.id == vehiculeId);
-    if(!vehicle){ showNotification("Véhicule introuvable", "error"); return; }
-
-    // CORRECTION : Gestion simplifiée des fichiers - Stockage en base64
-    let newDeliveryUrls = [];
-    if (deliveryFiles.length > 0) {
-      try {
-        for (const file of deliveryFiles) {
-          validateFile(file);
-          // Convertir en base64 au lieu d'uploader vers Supabase
-          const base64String = await fileToBase64(file);
-          newDeliveryUrls.push(base64String);
-        }
-      } catch (error) {
-        console.error("Error processing delivery files:", error);
-        showNotification("Erreur lors du traitement des photos: " + error.message, "error");
-        return;
-      }
-    }
-
-    const existingIntervention = interventions.find(i => i.id === id);
-    const existingDeliveryUrls = existingIntervention.delivery_files || [];
-
-    const updatedIntervention = {
-      vehicule_id: vehicle.id,
-      immatriculation: vehicle.immatriculation,
-      modele: vehicle.modele,
-      date, type, mecaniciens, pieces, statut, observations,
-      delivery_files: [...existingDeliveryUrls, ...newDeliveryUrls]
-    };
-
-    const result = await safeSupabaseOperation(
-      supabase
-        .from('interventions')
-        .update(updatedIntervention)
-        .eq('id', id),
-      "Intervention modifiée avec succès!",
-      submitButton
-    );
-    
-    if (result !== null) {
-      // CORRECTION : Mise à jour immédiate de l'interface
-      const index = interventions.findIndex(i => i.id === id);
-      if(index !== -1) {
-        interventions[index] = { ...interventions[index], ...updatedIntervention };
-      }
-      
-      updateUI();
-      updateGarageStock();
-      document.getElementById('intervention-modal').style.display = 'none';
-      currentEditingInterventionId = null;
-      deliveryFiles = [];
-      
-      // CORRECTION : Forcer le rechargement des données
-      setTimeout(() => {
-        loadData();
-      }, 500);
-    }
-  }
-
-  // 3. NOUVELLE SOLUTION POUR LES PHOTOS - STOCKAGE BASE64
-  function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
-    });
-  }
-
-  function base64ToImageUrl(base64String) {
-    return base64String; // Base64 est directement utilisable comme URL
-  }
-
-  // 4. CORRECTION DE L'AJOUT D'INTERVENTION
-  async function addIntervention(){
-    const vehiculeId = document.getElementById('vehicule-intervention').value;
-    const date = document.getElementById('date-intervention').value;
-    const type = document.getElementById('type-intervention').value.trim();
-    const mecaniciensElements = document.getElementById('mecaniciens');
-    const pieces = document.getElementById('pieces').value.trim();
-    const statut = document.getElementById('statut').value;
-    const observations = document.getElementById('observations').value.trim();
-    const submitButton = document.querySelector('#intervention-form button[type="submit"]');
-
-    if(!vehiculeId){ showNotification("Sélectionner un véhicule", "error"); return; }
-    if(!date || !type){ showNotification("Date et type requis", "error"); return; }
-
-    const mecaniciens = Array.from(mecaniciensElements.selectedOptions).map(o => o.text);
-    const vehicle = vehicles.find(v => v.id == vehiculeId);
-    if(!vehicle){ showNotification("Véhicule introuvable", "error"); return; }
-
-    // CORRECTION : Utilisation de base64 pour les photos
-    let deliveryUrls = [];
-    if (deliveryFiles.length > 0) {
-      try {
-        for (const file of deliveryFiles) {
-          validateFile(file);
-          const base64String = await fileToBase64(file);
-          deliveryUrls.push(base64String);
-        }
-      } catch (error) {
-        console.error("Error processing delivery files:", error);
-        showNotification("Erreur lors du traitement des photos: " + error.message, "error");
-        return;
-      }
-    }
-
-    const newIntervention = {
-      vehicule_id: vehicle.id,
-      immatriculation: vehicle.immatriculation,
-      modele: vehicle.modele,
-      date, 
-      type, 
-      mecaniciens, 
-      pieces, 
-      statut, 
-      observations,
-      delivery_files: deliveryUrls
-    };
-
-    const result = await safeSupabaseOperation(
-      supabase
-        .from('interventions')
-        .insert([newIntervention])
-        .select(),
-      "Intervention enregistrée avec succès!",
-      submitButton
-    );
-    
-    if (result) {
-      interventions.push(result[0]);
-      updateUI();
-      updateGarageStock();
-      
-      // CORRECTION : Réinitialisation complète du formulaire
-      document.getElementById('intervention-form').reset();
-      document.getElementById('delivery-files-preview').innerHTML = '';
-      deliveryFiles = [];
-      document.getElementById('date-intervention').value = new Date().toISOString().split('T')[0];
-      
-      // Recharger les données pour s'assurer de la synchronisation
-      setTimeout(() => {
-        loadData();
-      }, 500);
-    }
-  }
-
-  // 5. CORRECTION DE L'AJOUT DE VÉHICULE AVEC PHOTOS
-  async function addVehicle(){
-    const immatriculation = document.getElementById('immatriculation').value.trim();
-    const modele = document.getElementById('modele').value.trim();
-    const couleur = document.getElementById('couleur').value.trim();
-    const proprietaire = document.getElementById('proprietaire').value.trim();
-    const telephone = document.getElementById('telephone').value.trim();
-    const photoInput = document.getElementById('photo');
-    const editingId = document.getElementById('vehicle-form').dataset.editingId;
-    const submitButton = document.querySelector('#vehicle-form button[type="submit"]');
-
-    const validationErrors = validateVehicleData({ immatriculation, modele, couleur, proprietaire, telephone });
-    if (validationErrors.length > 0) {
-      showNotification(validationErrors.join(', '), "error");
-      return;
-    }
-
-    if(!immatriculation || !modele) { 
-      showNotification("Immatriculation et modèle requis", "error"); 
-      return; 
-    }
-
-    if (vehicles.some(v => v.immatriculation === immatriculation && v.id !== editingId)) {
-      showNotification("Cette immatriculation est déjà utilisée!", "error");
-      return;
-    }
-
-    let photoUrl = 'https://via.placeholder.com/100x70?text=Vehicle';
-    
-    // CORRECTION : Utilisation de base64 pour les photos de véhicules
-    if(photoInput && photoInput.files && photoInput.files[0]) {
-      try {
-        const file = photoInput.files[0];
-        validateFile(file);
-        photoUrl = await fileToBase64(file);
-      } catch (error) {
-        console.error("Error processing vehicle photo:", error);
-        showNotification("Erreur lors du traitement de la photo: " + error.message, "error");
-        return;
-      }
-    } else if (editingId) {
-      const existingVehicle = vehicles.find(v => v.id === editingId);
-      if (existingVehicle) {
-        photoUrl = existingVehicle.photo;
-      }
-    }
-
-    const vehicleData = {
-      immatriculation, 
-      modele, 
-      couleur, 
-      proprietaire, 
-      telephone, 
-      photo: photoUrl
-    };
-
-    let operation;
-    if (editingId) {
-      operation = supabase
-        .from('vehicles')
-        .update(vehicleData)
-        .eq('id', editingId);
-    } else {
-      operation = supabase
-        .from('vehicles')
-        .insert([vehicleData])
-        .select();
-    }
-
-    const result = await safeSupabaseOperation(
-      operation,
-      editingId ? "Véhicule modifié avec succès!" : "Véhicule ajouté avec succès!",
-      submitButton
-    );
-    
-    if (result) {
-      if (editingId) {
-        const index = vehicles.findIndex(v => v.id === editingId);
-        if (index !== -1) {
-          vehicles[index] = { ...vehicles[index], ...vehicleData };
-        }
-      } else {
-        vehicles.push(result[0]);
-      }
-      
-      updateUI();
-      resetVehicleForm();
-      
-      // Recharger les données
-      setTimeout(() => {
-        loadData();
-      }, 500);
-    }
-  }
-
-  // ==================== FONCTIONS EXISTANTES AVEC CORRECTIONS ====================
 
   function setButtonLoading(button, isLoading) {
     const btnText = button.querySelector('.btn-text');
@@ -1300,323 +1751,6 @@
       if (spinner) spinner.style.display = 'none';
     }
   }
-
-  function validateVehicleData(vehicle) {
-    const errors = [];
-    
-    if (!vehicle.immatriculation || vehicle.immatriculation.trim().length < 2) {
-      errors.push("L'immatriculation est requise");
-    }
-    
-    const dangerousChars = /[<>]/;
-    if (dangerousChars.test(vehicle.modele) || dangerousChars.test(vehicle.proprietaire) || dangerousChars.test(vehicle.couleur)) {
-      errors.push("Caractères dangereux détectés dans les champs texte");
-    }
-    
-    if (vehicle.telephone && !/^[\+]?[0-9\s\-\(\)]{10,}$/.test(vehicle.telephone)) {
-      errors.push("Format de téléphone invalide");
-    }
-    
-    return errors;
-  }
-
-  function validateFile(file, maxSizeMB = 5) {
-    const maxSize = maxSizeMB * 1024 * 1024;
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    
-    if (file.size > maxSize) {
-      throw new Error(`Fichier trop volumineux (max ${maxSizeMB}MB)`);
-    }
-    
-    if (!allowedTypes.includes(file.type)) {
-      throw new Error('Type de fichier non supporté. Utilisez JPG, PNG ou WebP');
-    }
-    
-    return true;
-  }
-
-  // Gestion du stock garage
-  async function syncGarageStock() {
-    try {
-      const { data, error } = await supabase
-        .from('garage_stock')
-        .select('vehicle_id, entry_date, exit_date, status')
-        .is('exit_date', null);
-      
-      if (error) throw error;
-      
-      garageStock = data.map(item => item.vehicle_id);
-      saveGarageStock();
-      updateStockDisplay();
-      
-    } catch (error) {
-      console.error('Erreur synchronisation stock:', error);
-      loadGarageStock();
-    }
-  }
-
-  async function updateGarageStock() {
-    const today = new Date().toISOString().split('T')[0];
-    
-    try {
-      const todayInterventions = interventions.filter(i => i.date === today);
-      
-      for (const intervention of todayInterventions) {
-        if (intervention.statut === 'termine') {
-          await safeSupabaseOperation(
-            supabase
-              .from('garage_stock')
-              .update({ exit_date: today })
-              .eq('vehicle_id', intervention.vehicule_id)
-              .is('exit_date', null)
-          );
-        } else {
-          const { data: existing } = await supabase
-            .from('garage_stock')
-            .select('id')
-            .eq('vehicle_id', intervention.vehicule_id)
-            .is('exit_date', null)
-            .single();
-            
-          if (!existing) {
-            await safeSupabaseOperation(
-              supabase
-                .from('garage_stock')
-                .insert([{
-                  vehicle_id: intervention.vehicule_id,
-                  entry_date: today,
-                  intervention_id: intervention.id
-                }])
-            );
-          }
-        }
-      }
-      
-      await syncGarageStock();
-      
-    } catch (error) {
-      console.error('Erreur mise à jour stock:', error);
-      fallbackStockUpdate();
-    }
-  }
-
-  function fallbackStockUpdate() {
-    const today = new Date().toISOString().split('T')[0];
-    
-    const vehiclesInGarage = [...garageStock];
-    
-    const vehiclesEnteredToday = interventions
-      .filter(i => i.date === today)
-      .map(i => i.vehicule_id)
-      .filter((v, i, a) => a.indexOf(v) === i)
-      .map(id => vehicles.find(v => v.id === id))
-      .filter(Boolean)
-      .filter(v => !garageStock.includes(v.id));
-    
-    vehiclesEnteredToday.forEach(v => {
-      if (!garageStock.includes(v.id)) {
-        garageStock.push(v.id);
-      }
-    });
-    
-    const vehiclesExitedToday = interventions
-      .filter(i => i.date === today && i.statut === 'termine')
-      .map(i => i.vehicule_id)
-      .filter((v, i, a) => a.indexOf(v) === i);
-    
-    vehiclesExitedToday.forEach(id => {
-      const index = garageStock.indexOf(id);
-      if (index > -1) {
-        garageStock.splice(index, 1);
-      }
-    });
-    
-    saveGarageStock();
-    updateStockDisplay();
-  }
-
-  function loadGarageStock() {
-    const savedStock = localStorage.getItem('garageStock');
-    if (savedStock) {
-      garageStock = JSON.parse(savedStock);
-    }
-  }
-
-  function saveGarageStock() {
-    localStorage.setItem('garageStock', JSON.stringify(garageStock));
-  }
-
-  function updateStockDisplay() {
-    const today = new Date().toISOString().split('T')[0];
-    
-    const vehiclesEnteredToday = interventions
-      .filter(i => i.date === today)
-      .map(i => i.vehicule_id)
-      .filter((v, i, a) => a.indexOf(v) === i)
-      .map(id => vehicles.find(v => v.id === id))
-      .filter(Boolean)
-      .filter(v => !garageStock.includes(v.id));
-
-    const vehiclesExitedToday = interventions
-      .filter(i => i.date === today && i.statut === 'termine')
-      .map(i => i.vehicule_id)
-      .filter((v, i, a) => a.indexOf(v) === i);
-
-    const interventionsInProgress = interventions.filter(i => i.statut === 'en-cours').length;
-    
-    document.getElementById('vehicles-stock').textContent = garageStock.length;
-    document.getElementById('vehicles-entered-today').textContent = vehiclesEnteredToday.length;
-    document.getElementById('vehicles-exited-today').textContent = vehiclesExitedToday.length;
-    document.getElementById('interventions-in-progress').textContent = interventionsInProgress;
-  }
-
-  // Fonction pour afficher les détails du véhicule
-  function showVehicleDetails(vehicleId) {
-    const vehicle = vehicles.find(v => v.id === vehicleId);
-    if (!vehicle) return;
-    
-    const interventionsForVehicle = interventions.filter(i => i.vehicule_id === vehicleId)
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    let detailsHtml = `
-      <div class="vehicle-details-grid">
-        <div>
-          <img src="${vehicle.photo}" class="vehicle-details-photo" alt="Photo du véhicule" onerror="this.src='https://via.placeholder.com/300x200?text=Vehicle'">
-        </div>
-        <div>
-          <h3>Informations du véhicule</h3>
-          <p><strong>Immatriculation:</strong> ${vehicle.immatriculation}</p>
-          <p><strong>Modèle:</strong> ${vehicle.modele}</p>
-          <p><strong>Couleur:</strong> ${vehicle.couleur}</p>
-          <p><strong>Propriétaire:</strong> ${vehicle.proprietaire || 'Non renseigné'}</p>
-          <p><strong>Téléphone:</strong> ${vehicle.telephone || 'Non renseigné'}</p>
-        </div>
-      </div>
-    `;
-    
-    if (interventionsForVehicle.length > 0) {
-      detailsHtml += `
-        <h3>Historique des interventions (${interventionsForVehicle.length})</h3>
-        <div class="intervention-history">
-      `;
-      
-      interventionsForVehicle.forEach(intervention => {
-        const statusClass = intervention.statut.replace('-', ' ');
-        detailsHtml += `
-          <div class="intervention-item ${statusClass}">
-            <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 8px;">
-              <div>
-                <strong>${intervention.type}</strong> - ${formatDate(intervention.date)}
-              </div>
-              <span class="status-badge status-${intervention.statut}">${intervention.statut}</span>
-            </div>
-            <p><strong>Mécaniciens:</strong> ${intervention.mecaniciens.join(', ')}</p>
-            ${intervention.pieces ? `<p><strong>Pièces utilisées:</strong> ${intervention.pieces}</p>` : ''}
-            ${intervention.observations ? `<p><strong>Observations:</strong> ${intervention.observations}</p>` : ''}
-            <div style="margin-top: 10px;">
-              <button class="btn-edit btn-sm" onclick="editIntervention('${intervention.id}'); closeModal('vehicle-details-modal')">
-                <i class="fas fa-edit"></i> Modifier
-              </button>
-            </div>
-          </div>
-        `;
-      });
-      
-      detailsHtml += `</div>`;
-    } else {
-      detailsHtml += '<p style="text-align: center; padding: 20px;">Aucune intervention enregistrée pour ce véhicule.</p>';
-    }
-    
-    document.getElementById('vehicle-details-content').innerHTML = detailsHtml;
-    document.getElementById('vehicle-details-modal').style.display = 'flex';
-  }
-
-  // Statistiques
-  function updateStats(){
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-    
-    const monthlyOil = interventions.filter(i=>{
-      const d = new Date(i.date);
-      return i.type.toLowerCase() === 'vidange' && d.getMonth()===currentMonth && d.getFullYear()===currentYear;
-    }).length;
-
-    const vehiclesInWaiting = [...new Set(
-      interventions
-        .filter(i => i.statut === 'en-attente')
-        .map(i => i.vehicule_id)
-    )].length;
-
-    document.getElementById('vehicles-waiting').textContent = vehiclesInWaiting;
-
-    document.getElementById('total-interventions').textContent = interventions.length;
-    document.getElementById('month-oil-changes').textContent = monthlyOil;
-    
-    const completed = interventions.filter(i=>i.statut==='termine').length;
-    document.getElementById('completion-rate').textContent = interventions.length>0 ? Math.round((completed/interventions.length)*100) + '%' : '0%';
-
-    const mechanicsStats = {};
-    interventions.forEach(i=>{
-      (i.mecaniciens||[]).forEach(m=>{
-        if(!mechanicsStats[m]) mechanicsStats[m] = { total:0, inProgress:0, completed:0 };
-        mechanicsStats[m].total++;
-        if(i.statut==='en-cours') mechanicsStats[m].inProgress++;
-        if(i.statut==='termine') mechanicsStats[m].completed++;
-      });
-    });
-
-    const container = document.getElementById('mechanics-stats');
-    container.innerHTML = '';
-    Object.keys(mechanicsStats).forEach(m=>{
-      const successRate = mechanicsStats[m].total > 0 ? 
-        Math.round((mechanicsStats[m].completed / mechanicsStats[m].total) * 100) : 0;
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${m}</td>
-        <td>${mechanicsStats[m].total}</td>
-        <td>${mechanicsStats[m].inProgress}</td>
-        <td>${mechanicsStats[m].completed}</td>
-        <td>${successRate}%</td>
-      `;
-      container.appendChild(row);
-    });
-
-    const typeStats = {};
-    interventions.forEach(i => {
-      if(!typeStats[i.type]) typeStats[i.type] = 0;
-      typeStats[i.type]++;
-    });
-
-    const typeContainer = document.getElementById('intervention-types-stats');
-    typeContainer.innerHTML = '';
-    
-    const sortedTypes = Object.entries(typeStats)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10);
-
-    sortedTypes.forEach(([type, count]) => {
-      const percentage = interventions.length > 0 ? Math.round((count / interventions.length) * 100) : 0;
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td><strong>${type}</strong></td>
-        <td style="text-align: center; font-weight: 700;">${count}</td>
-        <td style="text-align: center; font-weight: 600; color: #27ae60;">${percentage}%</td>
-        <td>
-          <div class="percentage-bar">
-            <div class="percentage-fill" style="width: ${percentage}%"></div>
-          </div>
-        </td>
-      `;
-      typeContainer.appendChild(row);
-    });
-
-    if (sortedTypes.length === 0) {
-      typeContainer.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">Aucune intervention enregistrée</td></tr>';
-    }
-  }
-
-  // ==================== FONCTIONS D'INITIALISATION ====================
 
   function initApp(){
     const today = new Date().toISOString().split('T')[0];
@@ -1673,13 +1807,20 @@
     });
 
     loadGarageStock();
+    
+    // Forcer l'affichage du bon onglet au chargement
+    setTimeout(() => {
+        const activeTab = document.querySelector('.menu-item.active');
+        if (activeTab && activeTab.dataset.tab) {
+            switchTab(activeTab.dataset.tab);
+        }
+    }, 100);
   }
 
   function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
   }
 
-  // Gestion des fichiers de bons de livraison
   async function handleDeliveryFiles(e) {
     const files = Array.from(e.target.files);
     const previewContainer = document.getElementById('delivery-files-preview');
@@ -1821,7 +1962,6 @@
     }
   }
 
-  // Load from Supabase
   async function loadData(){
     try {
       const vehiclesData = await safeSupabaseOperation(
@@ -1834,9 +1974,9 @@
       );
       interventions = interventionsData || [];
 
-      await syncGarageStock();
-      
+      await loadStockData();
       updateUI();
+      
     } catch (err) {
       console.error("Load error", err);
     }
@@ -1854,12 +1994,19 @@
       });
     }
 
+    // Gestion améliorée de la navigation
     document.querySelectorAll('.menu-item').forEach(item => {
       item.addEventListener('click', function(){
-        switchTab(this.dataset.tab);
-        document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
+        const tabName = this.dataset.tab;
+        
+        // Mettre à jour la navigation
+        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
         this.classList.add('active');
         
+        // Changer d'onglet
+        switchTab(tabName);
+        
+        // Fermer le menu mobile si ouvert
         if(window.innerWidth <= 768) {
           sidebar.classList.remove('open');
           mainContent.classList.remove('sidebar-open');
@@ -1892,18 +2039,31 @@
     if(journalReset) journalReset.addEventListener('click', resetJournal);
 
     const quickAddVehicle = document.getElementById('quick-add-vehicle');
-    if(quickAddVehicle) quickAddVehicle.addEventListener('click', () => {
-      switchTab('vehicles');
-      document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
-      document.querySelector('[data-tab="vehicles"]').classList.add('active');
-    });
+    if(quickAddVehicle) {
+      quickAddVehicle.addEventListener('click', () => {
+        switchTab('vehicles');
+        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+        document.querySelector('[data-tab="vehicles"]').classList.add('active');
+      });
+    }
 
     const quickAddIntervention = document.getElementById('quick-add-intervention');
-    if(quickAddIntervention) quickAddIntervention.addEventListener('click', () => {
-      switchTab('interventions');
-      document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
-      document.querySelector('[data-tab="interventions"]').classList.add('active');
-    });
+    if(quickAddIntervention) {
+      quickAddIntervention.addEventListener('click', () => {
+        switchTab('interventions');
+        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+        document.querySelector('[data-tab="interventions"]').classList.add('active');
+      });
+    }
+
+    const quickManageStock = document.getElementById('quick-manage-stock');
+    if(quickManageStock) {
+      quickManageStock.addEventListener('click', () => {
+        switchTab('stock');
+        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+        document.querySelector('[data-tab="stock"]').classList.add('active');
+      });
+    }
 
     const cancelEdit = document.getElementById('cancel-edit');
     if(cancelEdit) cancelEdit.addEventListener('click', () => {
@@ -1916,280 +2076,269 @@
     if(cancelEditVehicle) cancelEditVehicle.addEventListener('click', resetVehicleForm);
   }
 
-  function switchTab(tabName){
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    const el = document.getElementById(tabName + '-tab');
-    if(el) el.classList.add('active');
-  }
+  // Les autres fonctions existantes (addVehicle, addIntervention, updateIntervention, etc.)
+  // ... sont conservées telles quelles de votre code original
 
-  // Edit intervention
-  function editIntervention(id){
-    const intervention = interventions.find(i => i.id === id);
-    if(!intervention) return;
-    
-    currentEditingInterventionId = id;
-    deliveryFiles = [];
-    
-    document.getElementById('edit-intervention-id').value = id;
-    document.getElementById('edit-vehicule-intervention').value = intervention.vehicule_id;
-    document.getElementById('edit-date-intervention').value = intervention.date;
-    document.getElementById('edit-type-intervention').value = intervention.type;
-    document.getElementById('edit-pieces').value = intervention.pieces || '';
-    document.getElementById('edit-statut').value = intervention.statut;
-    document.getElementById('edit-observations').value = intervention.observations || '';
-    
-    const previewContainer = document.getElementById('edit-delivery-files-preview');
-    previewContainer.innerHTML = '';
-    if (intervention.delivery_files && intervention.delivery_files.length > 0) {
-      intervention.delivery_files.forEach((url, index) => {
-        const fileItem = document.createElement('div');
-        fileItem.className = 'delivery-file-item';
-        fileItem.innerHTML = `
-          <img src="${url}" class="delivery-file-preview" alt="Bon de livraison">
-          <div class="delivery-file-name">Bon de livraison ${index + 1}</div>
-          <div class="remove-delivery-file" onclick="removeExistingDeliveryFile('${id}', ${index})">
-            <i class="fas fa-times"></i> Supprimer
-          </div>
-        `;
-        previewContainer.appendChild(fileItem);
-      });
-    }
-    
-    const mecaniciensSelect = document.getElementById('edit-mecaniciens');
-    Array.from(mecaniciensSelect.options).forEach(option => {
-      option.selected = intervention.mecaniciens.includes(option.text);
-    });
-    
-    document.getElementById('intervention-modal').style.display = 'flex';
-  }
+  // ==================== FONCTIONS DE BASE (conservées de votre code) ====================
 
-  function resetVehicleForm() {
-    document.getElementById('vehicle-form').reset();
-    delete document.getElementById('vehicle-form').dataset.editingId;
-    document.querySelector('#vehicle-form .btn-text').textContent = 'Enregistrer le véhicule';
-    document.getElementById('cancel-edit-vehicle').style.display = 'none';
-    document.getElementById('photo-preview').style.display = 'none';
-  }
+  async function addVehicle(){
+    const immatriculation = document.getElementById('immatriculation').value.trim();
+    const modele = document.getElementById('modele').value.trim();
+    const couleur = document.getElementById('couleur').value.trim();
+    const proprietaire = document.getElementById('proprietaire').value.trim();
+    const telephone = document.getElementById('telephone').value.trim();
+    const photoInput = document.getElementById('photo');
+    const editingId = document.getElementById('vehicle-form').dataset.editingId;
+    const submitButton = document.querySelector('#vehicle-form button[type="submit"]');
 
-  // Search by filters
-  function performSearch(){
-    const immatriculation = (document.getElementById('search-immatriculation').value || '').toLowerCase();
-    const modele = (document.getElementById('search-modele').value || '').toLowerCase();
-    const couleur = (document.getElementById('search-couleur').value || '').toLowerCase();
-    const date = document.getElementById('search-date').value;
-    const type = document.getElementById('search-type').value;
-    const statut = document.getElementById('search-statut').value;
-
-    let results = vehicles.slice();
-
-    if(immatriculation) results = results.filter(v => v.immatriculation.toLowerCase().includes(immatriculation));
-    if(modele) results = results.filter(v => v.modele.toLowerCase().includes(modele));
-    if(couleur) results = results.filter(v => v.couleur.toLowerCase().includes(couleur));
-
-    if(date || type || statut) {
-      const ids = interventions.filter(i => {
-        let match = true;
-        if(date) match = match && i.date === date;
-        if(type) match = match && i.type === type;
-        if(statut) match = match && i.statut === statut;
-        return match;
-      }).map(i => i.vehicule_id);
-      results = results.filter(v => ids.includes(v.id));
+    if(!immatriculation || !modele) { 
+      showNotification("Immatriculation et modèle requis", "error"); 
+      return; 
     }
 
-    const resultsContainer = document.getElementById('search-results');
-    const resultsCount = document.getElementById('search-results-count');
-    resultsContainer.innerHTML = '';
-    
-    if(results.length === 0){
-      resultsContainer.innerHTML = '<tr><td colspan="8" style="text-align:center">Aucun résultat trouvé</td></tr>';
-      resultsCount.innerHTML = '<p>Aucun résultat trouvé</p>';
+    if (vehicles.some(v => v.immatriculation === immatriculation && v.id !== editingId)) {
+      showNotification("Cette immatriculation est déjà utilisée!", "error");
       return;
     }
 
-    resultsCount.innerHTML = '<p>' + results.length + ' résultat(s) trouvé(s)</p>';
-
-    results.forEach(vehicle => {
-      const lastIntervention = interventions
-        .filter(i => i.vehicule_id === vehicle.id)
-        .sort((a,b)=> new Date(b.date) - new Date(a.date))[0];
-
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><img src="${vehicle.photo}" class="vehicle-photo" alt="photo" loading="lazy" onerror="this.src='https://via.placeholder.com/100x70?text=Vehicle'"></td>
-        <td>${vehicle.immatriculation}</td>
-        <td>${vehicle.modele}</td>
-        <td>${vehicle.couleur}</td>
-        <td>${vehicle.proprietaire || ''}</td>
-        <td>${lastIntervention ? lastIntervention.type + ' (' + formatDate(lastIntervention.date) + ')' : 'Aucune'}</td>
-        <td>${lastIntervention ? '<span class="status-badge status-' + lastIntervention.statut + '">' + lastIntervention.statut + '</span>' : 'N/A'}</td>
-        <td class="action-buttons">
-          <button class="btn-edit" onclick="editVehicle('${vehicle.id}')">Modifier</button>
-          <button class="btn-delete" onclick="deleteVehicle('${vehicle.id}')">Supprimer</button>
-          <button class="btn-details" onclick="showVehicleDetails('${vehicle.id}')">Détails</button>
-        </td>
-      `;
-      resultsContainer.appendChild(tr);
-    });
-  }
-
-  function resetSearch(){
-    document.getElementById('search-immatriculation').value = '';
-    document.getElementById('search-modele').value = '';
-    document.getElementById('search-couleur').value = '';
-    document.getElementById('search-date').value = '';
-    document.getElementById('search-type').value = '';
-    document.getElementById('search-statut').value = '';
-    document.getElementById('search-results').innerHTML = '';
-    document.getElementById('search-results-count').innerHTML = '';
-  }
-
-  // Global search (simple) avec debounce
-  function performGlobalSearch(query){
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      if(!query || query.length < 2) return;
-      query = query.toLowerCase();
-
-      const results = [
-        ...vehicles.filter(v => v.immatriculation.toLowerCase().includes(query) || v.modele.toLowerCase().includes(query) || (v.proprietaire || '').toLowerCase().includes(query)),
-        ...interventions.filter(i => i.immatriculation.toLowerCase().includes(query) || (i.type || '').toLowerCase().includes(query) || i.mecaniciens.some(m => m.toLowerCase().includes(query))).map(i => vehicles.find(v=>v.id===i.vehicule_id)).filter(Boolean)
-      ];
-
-      const unique = [...new Map(results.map(r => [r.id, r])).values()];
-      if(unique.length) showNotification(unique.length + ' résultat(s) trouvé(s) pour "' + query + '"');
-    }, 300);
-  }
-
-  // Update flux
-  function updateFlux(){
-    const today = new Date().toISOString().split('T')[0];
+    let photoUrl = 'https://via.placeholder.com/100x70?text=Vehicle';
     
-    const vehiclesEntered = interventions
-      .filter(i => i.date === today)
-      .map(i => i.vehicule_id)
-      .filter((v, i, a) => a.indexOf(v) === i)
-      .map(id => vehicles.find(v => v.id === id))
-      .filter(Boolean);
-    
-    const vehiclesInProgress = interventions
-      .filter(i => i.date === today && i.statut === 'en-cours')
-      .map(i => i.vehicule_id)
-      .filter((v, i, a) => a.indexOf(v) === i)
-      .map(id => vehicles.find(v => v.id === id))
-      .filter(Boolean);
-    
-    const vehiclesExited = interventions
-      .filter(i => i.date === today && i.statut === 'termine')
-      .map(i => i.vehicule_id)
-      .filter((v, i, a) => a.indexOf(v) === i)
-      .map(id => vehicles.find(v => v.id === id))
-      .filter(Boolean);
-    
-    const entreesContainer = document.getElementById('flux-entrees');
-    const enCoursContainer = document.getElementById('flux-en-cours');
-    const sortiesContainer = document.getElementById('flux-sorties');
-    
-    entreesContainer.innerHTML = vehiclesEntered.length ? 
-      vehiclesEntered.map(v => `
-        <div class="flux-item entree">
-          <div class="flux-item-header">
-            <span class="flux-item-title">${v.immatriculation}</span>
-          </div>
-          <div class="flux-item-details">${v.modele} - ${v.couleur}</div>
-        </div>
-      `).join('') : '<p>Aucun véhicule entré</p>';
-    
-    enCoursContainer.innerHTML = vehiclesInProgress.length ? 
-      vehiclesInProgress.map(v => `
-        <div class="flux-item">
-          <div class="flux-item-header">
-            <span class="flux-item-title">${v.immatriculation}</span>
-          </div>
-          <div class="flux-item-details">${v.modele} - ${v.couleur}</div>
-        </div>
-      `).join('') : '<p>Aucun véhicule en cours</p>';
-    
-    sortiesContainer.innerHTML = vehiclesExited.length ? 
-      vehiclesExited.map(v => `
-        <div class="flux-item sortie">
-          <div class="flux-item-header">
-            <span class="flux-item-title">${v.immatriculation}</span>
-          </div>
-          <div class="flux-item-details">${v.modele} - ${v.couleur}</div>
-        </div>
-      `).join('') : '<p>Aucun véhicule sorti</p>';
-  }
-
-  // Journal complet des véhicules
-  function updateJournalComplet() {
-    const selectedDate = document.getElementById('journal-date').value;
-    const selectedType = document.getElementById('journal-type').value;
-    const selectedStatut = document.getElementById('journal-statut').value;
-    
-    let filteredInterventions = [...interventions];
-    
-    if (selectedDate) {
-      filteredInterventions = filteredInterventions.filter(i => i.date === selectedDate);
+    if(photoInput && photoInput.files && photoInput.files[0]) {
+      try {
+        const file = photoInput.files[0];
+        validateFile(file);
+        const reader = new FileReader();
+        photoUrl = await new Promise((resolve) => {
+          reader.onload = function(e) {
+            resolve(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        });
+      } catch (error) {
+        console.error("Error processing vehicle photo:", error);
+        showNotification("Erreur lors du traitement de la photo: " + error.message, "error");
+        return;
+      }
+    } else if (editingId) {
+      const existingVehicle = vehicles.find(v => v.id === editingId);
+      if (existingVehicle) {
+        photoUrl = existingVehicle.photo;
+      }
     }
-    
-    if (selectedType) {
-      filteredInterventions = filteredInterventions.filter(i => i.type === selectedType);
+
+    const vehicleData = {
+      immatriculation, 
+      modele, 
+      couleur, 
+      proprietaire, 
+      telephone, 
+      photo: photoUrl
+    };
+
+    let operation;
+    if (editingId) {
+      operation = supabase
+        .from('vehicles')
+        .update(vehicleData)
+        .eq('id', editingId);
+    } else {
+      operation = supabase
+        .from('vehicles')
+        .insert([vehicleData])
+        .select();
     }
+
+    const result = await safeSupabaseOperation(
+      operation,
+      editingId ? "Véhicule modifié avec succès!" : "Véhicule ajouté avec succès!",
+      submitButton
+    );
     
-    if (selectedStatut) {
-      filteredInterventions = filteredInterventions.filter(i => i.statut === selectedStatut);
-    }
-    
-    filteredInterventions.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    const container = document.getElementById('journal-complet');
-    container.innerHTML = '';
-    
-    if (filteredInterventions.length === 0) {
-      container.innerHTML = '<tr><td colspan="7" style="text-align:center">Aucune intervention trouvée</td></tr>';
-      return;
-    }
-    
-    filteredInterventions.forEach(intervention => {
-      const vehicle = vehicles.find(v => v.id === intervention.vehicule_id);
-      if (!vehicle) return;
-      
-      let deliveryPhotosHtml = 'Aucun';
-      if (intervention.delivery_files && intervention.delivery_files.length > 0) {
-        deliveryPhotosHtml = intervention.delivery_files.map(url => 
-          `<img src="${url}" class="delivery-photo" alt="Bon livraison" title="Bon de livraison" loading="lazy" onerror="this.style.display='none'">`
-        ).join('');
+    if (result) {
+      if (editingId) {
+        const index = vehicles.findIndex(v => v.id === editingId);
+        if (index !== -1) {
+          vehicles[index] = { ...vehicles[index], ...vehicleData };
+        }
+      } else {
+        vehicles.push(result[0]);
       }
       
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${formatDate(intervention.date)}</td>
-        <td>${vehicle.immatriculation} - ${vehicle.modele}</td>
-        <td>${intervention.type}</td>
-        <td>${intervention.mecaniciens.join(', ')}</td>
-        <td>${deliveryPhotosHtml}</td>
-        <td><span class="status-badge status-${intervention.statut}">${intervention.statut}</span></td>
-        <td>${intervention.observations || ''}</td>
-      `;
-      container.appendChild(tr);
-    });
+      updateUI();
+      resetVehicleForm();
+    }
   }
 
-  function resetJournal() {
-    document.getElementById('journal-date').value = '';
-    document.getElementById('journal-type').value = '';
-    document.getElementById('journal-statut').value = '';
-    updateJournalComplet();
+  async function addIntervention(){
+    const vehiculeId = document.getElementById('vehicule-intervention').value;
+    const date = document.getElementById('date-intervention').value;
+    const type = document.getElementById('type-intervention').value.trim();
+    const mecaniciensElements = document.getElementById('mecaniciens');
+    const pieces = document.getElementById('pieces').value.trim();
+    const statut = document.getElementById('statut').value;
+    const observations = document.getElementById('observations').value.trim();
+    const submitButton = document.querySelector('#intervention-form button[type="submit"]');
+
+    if(!vehiculeId){ showNotification("Sélectionner un véhicule", "error"); return; }
+    if(!date || !type){ showNotification("Date et type requis", "error"); return; }
+
+    const mecaniciens = Array.from(mecaniciensElements.selectedOptions).map(o => o.text);
+    const vehicle = vehicles.find(v => v.id == vehiculeId);
+    if(!vehicle){ showNotification("Véhicule introuvable", "error"); return; }
+
+    let deliveryUrls = [];
+    if (deliveryFiles.length > 0) {
+      try {
+        for (const file of deliveryFiles) {
+          validateFile(file);
+          const reader = new FileReader();
+          const base64String = await new Promise((resolve) => {
+            reader.onload = function(e) {
+              resolve(e.target.result);
+            };
+            reader.readAsDataURL(file);
+          });
+          deliveryUrls.push(base64String);
+        }
+      } catch (error) {
+        console.error("Error processing delivery files:", error);
+        showNotification("Erreur lors du traitement des photos: " + error.message, "error");
+        return;
+      }
+    }
+
+    const newIntervention = {
+      vehicule_id: vehicle.id,
+      immatriculation: vehicle.immatriculation,
+      modele: vehicle.modele,
+      date, 
+      type, 
+      mecaniciens, 
+      pieces, 
+      statut, 
+      observations,
+      delivery_files: deliveryUrls
+    };
+
+    const result = await safeSupabaseOperation(
+      supabase
+        .from('interventions')
+        .insert([newIntervention])
+        .select(),
+      "Intervention enregistrée avec succès!",
+      submitButton
+    );
+    
+    if (result) {
+      interventions.push(result[0]);
+      updateUI();
+      
+      document.getElementById('intervention-form').reset();
+      document.getElementById('delivery-files-preview').innerHTML = '';
+      deliveryFiles = [];
+      document.getElementById('date-intervention').value = new Date().toISOString().split('T')[0];
+    }
   }
 
-  // UI updates
+  async function updateIntervention(){
+    const id = document.getElementById('edit-intervention-id').value;
+    const vehiculeId = document.getElementById('edit-vehicule-intervention').value;
+    const date = document.getElementById('edit-date-intervention').value;
+    const type = document.getElementById('edit-type-intervention').value.trim();
+    const mecaniciensElements = document.getElementById('edit-mecaniciens');
+    const pieces = document.getElementById('edit-pieces').value.trim();
+    const statut = document.getElementById('edit-statut').value;
+    const observations = document.getElementById('edit-observations').value.trim();
+    const submitButton = document.querySelector('#edit-intervention-form button[type="submit"]');
+
+    if(!vehiculeId){ showNotification("Sélectionner un véhicule", "error"); return; }
+    if(!date || !type){ showNotification("Date et type requis", "error"); return; }
+
+    const mecaniciens = Array.from(mecaniciensElements.selectedOptions).map(o => o.text);
+    const vehicle = vehicles.find(v => v.id == vehiculeId);
+    if(!vehicle){ showNotification("Véhicule introuvable", "error"); return; }
+
+    let newDeliveryUrls = [];
+    if (deliveryFiles.length > 0) {
+      try {
+        for (const file of deliveryFiles) {
+          validateFile(file);
+          const reader = new FileReader();
+          const base64String = await new Promise((resolve) => {
+            reader.onload = function(e) {
+              resolve(e.target.result);
+            };
+            reader.readAsDataURL(file);
+          });
+          newDeliveryUrls.push(base64String);
+        }
+      } catch (error) {
+        console.error("Error processing delivery files:", error);
+        showNotification("Erreur lors du traitement des photos: " + error.message, "error");
+        return;
+      }
+    }
+
+    const existingIntervention = interventions.find(i => i.id === id);
+    const existingDeliveryUrls = existingIntervention.delivery_files || [];
+
+    const updatedIntervention = {
+      vehicule_id: vehicle.id,
+      immatriculation: vehicle.immatriculation,
+      modele: vehicle.modele,
+      date, type, mecaniciens, pieces, statut, observations,
+      delivery_files: [...existingDeliveryUrls, ...newDeliveryUrls]
+    };
+
+    const result = await safeSupabaseOperation(
+      supabase
+        .from('interventions')
+        .update(updatedIntervention)
+        .eq('id', id),
+      "Intervention modifiée avec succès!",
+      submitButton
+    );
+    
+    if (result !== null) {
+      const index = interventions.findIndex(i => i.id === id);
+      if(index !== -1) {
+        interventions[index] = { ...interventions[index], ...updatedIntervention };
+      }
+      
+      updateUI();
+      document.getElementById('intervention-modal').style.display = 'none';
+      currentEditingInterventionId = null;
+      deliveryFiles = [];
+    }
+  }
+
+  function validateFile(file, maxSizeMB = 5) {
+    const maxSize = maxSizeMB * 1024 * 1024;
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    
+    if (file.size > maxSize) {
+      throw new Error(`Fichier trop volumineux (max ${maxSizeMB}MB)`);
+    }
+    
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error('Type de fichier non supporté. Utilisez JPG, PNG ou WebP');
+    }
+    
+    return true;
+  }
+
+  function loadGarageStock() {
+    const savedStock = localStorage.getItem('garageStock');
+    if (savedStock) {
+      garageStock = JSON.parse(savedStock);
+    }
+  }
+
   function updateUI(){
     updateVehicleList();
     updateInterventionsList();
     updateVehicleSelect();
     updateStats();
-    updateStockDisplay();
     updateFlux();
     updateJournalComplet();
   }
@@ -2288,7 +2437,210 @@
     });
   }
 
-  // Edit & delete vehicle
+  function updateStats(){
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    const monthlyOil = interventions.filter(i=>{
+      const d = new Date(i.date);
+      return i.type.toLowerCase() === 'vidange' && d.getMonth()===currentMonth && d.getFullYear()===currentYear;
+    }).length;
+
+    const vehiclesInWaiting = [...new Set(
+      interventions
+        .filter(i => i.statut === 'en-attente')
+        .map(i => i.vehicule_id)
+    )].length;
+
+    document.getElementById('vehicles-waiting').textContent = vehiclesInWaiting;
+
+    document.getElementById('total-interventions').textContent = interventions.length;
+    document.getElementById('month-oil-changes').textContent = monthlyOil;
+    
+    const completed = interventions.filter(i=>i.statut==='termine').length;
+    document.getElementById('completion-rate').textContent = interventions.length>0 ? Math.round((completed/interventions.length)*100) + '%' : '0%';
+
+    const mechanicsStats = {};
+    interventions.forEach(i=>{
+      (i.mecaniciens||[]).forEach(m=>{
+        if(!mechanicsStats[m]) mechanicsStats[m] = { total:0, inProgress:0, completed:0 };
+        mechanicsStats[m].total++;
+        if(i.statut==='en-cours') mechanicsStats[m].inProgress++;
+        if(i.statut==='termine') mechanicsStats[m].completed++;
+      });
+    });
+
+    const container = document.getElementById('mechanics-stats');
+    container.innerHTML = '';
+    Object.keys(mechanicsStats).forEach(m=>{
+      const successRate = mechanicsStats[m].total > 0 ? 
+        Math.round((mechanicsStats[m].completed / mechanicsStats[m].total) * 100) : 0;
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${m}</td>
+        <td>${mechanicsStats[m].total}</td>
+        <td>${mechanicsStats[m].inProgress}</td>
+        <td>${mechanicsStats[m].completed}</td>
+        <td>${successRate}%</td>
+      `;
+      container.appendChild(row);
+    });
+
+    const typeStats = {};
+    interventions.forEach(i => {
+      if(!typeStats[i.type]) typeStats[i.type] = 0;
+      typeStats[i.type]++;
+    });
+
+    const typeContainer = document.getElementById('intervention-types-stats');
+    typeContainer.innerHTML = '';
+    
+    const sortedTypes = Object.entries(typeStats)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10);
+
+    sortedTypes.forEach(([type, count]) => {
+      const percentage = interventions.length > 0 ? Math.round((count / interventions.length) * 100) : 0;
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><strong>${type}</strong></td>
+        <td style="text-align: center; font-weight: 700;">${count}</td>
+        <td style="text-align: center; font-weight: 600; color: #27ae60;">${percentage}%</td>
+        <td>
+          <div class="percentage-bar">
+            <div class="percentage-fill" style="width: ${percentage}%"></div>
+          </div>
+        </td>
+      `;
+      typeContainer.appendChild(row);
+    });
+
+    if (sortedTypes.length === 0) {
+      typeContainer.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">Aucune intervention enregistrée</td></tr>';
+    }
+  }
+
+  function updateFlux(){
+    const today = new Date().toISOString().split('T')[0];
+    
+    const vehiclesEntered = interventions
+      .filter(i => i.date === today)
+      .map(i => i.vehicule_id)
+      .filter((v, i, a) => a.indexOf(v) === i)
+      .map(id => vehicles.find(v => v.id === id))
+      .filter(Boolean);
+    
+    const vehiclesInProgress = interventions
+      .filter(i => i.date === today && i.statut === 'en-cours')
+      .map(i => i.vehicule_id)
+      .filter((v, i, a) => a.indexOf(v) === i)
+      .map(id => vehicles.find(v => v.id === id))
+      .filter(Boolean);
+    
+    const vehiclesExited = interventions
+      .filter(i => i.date === today && i.statut === 'termine')
+      .map(i => i.vehicule_id)
+      .filter((v, i, a) => a.indexOf(v) === i)
+      .map(id => vehicles.find(v => v.id === id))
+      .filter(Boolean);
+    
+    const entreesContainer = document.getElementById('flux-entrees');
+    const enCoursContainer = document.getElementById('flux-en-cours');
+    const sortiesContainer = document.getElementById('flux-sorties');
+    
+    entreesContainer.innerHTML = vehiclesEntered.length ? 
+      vehiclesEntered.map(v => `
+        <div class="flux-item entree">
+          <div class="flux-item-header">
+            <span class="flux-item-title">${v.immatriculation}</span>
+          </div>
+          <div class="flux-item-details">${v.modele} - ${v.couleur}</div>
+        </div>
+      `).join('') : '<p>Aucun véhicule entré</p>';
+    
+    enCoursContainer.innerHTML = vehiclesInProgress.length ? 
+      vehiclesInProgress.map(v => `
+        <div class="flux-item">
+          <div class="flux-item-header">
+            <span class="flux-item-title">${v.immatriculation}</span>
+          </div>
+          <div class="flux-item-details">${v.modele} - ${v.couleur}</div>
+        </div>
+      `).join('') : '<p>Aucun véhicule en cours</p>';
+    
+    sortiesContainer.innerHTML = vehiclesExited.length ? 
+      vehiclesExited.map(v => `
+        <div class="flux-item sortie">
+          <div class="flux-item-header">
+            <span class="flux-item-title">${v.immatriculation}</span>
+          </div>
+          <div class="flux-item-details">${v.modele} - ${v.couleur}</div>
+        </div>
+      `).join('') : '<p>Aucun véhicule sorti</p>';
+  }
+
+  function updateJournalComplet() {
+    const selectedDate = document.getElementById('journal-date').value;
+    const selectedType = document.getElementById('journal-type').value;
+    const selectedStatut = document.getElementById('journal-statut').value;
+    
+    let filteredInterventions = [...interventions];
+    
+    if (selectedDate) {
+      filteredInterventions = filteredInterventions.filter(i => i.date === selectedDate);
+    }
+    
+    if (selectedType) {
+      filteredInterventions = filteredInterventions.filter(i => i.type === selectedType);
+    }
+    
+    if (selectedStatut) {
+      filteredInterventions = filteredInterventions.filter(i => i.statut === selectedStatut);
+    }
+    
+    filteredInterventions.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    const container = document.getElementById('journal-complet');
+    container.innerHTML = '';
+    
+    if (filteredInterventions.length === 0) {
+      container.innerHTML = '<tr><td colspan="7" style="text-align:center">Aucune intervention trouvée</td></tr>';
+      return;
+    }
+    
+    filteredInterventions.forEach(intervention => {
+      const vehicle = vehicles.find(v => v.id === intervention.vehicule_id);
+      if (!vehicle) return;
+      
+      let deliveryPhotosHtml = 'Aucun';
+      if (intervention.delivery_files && intervention.delivery_files.length > 0) {
+        deliveryPhotosHtml = intervention.delivery_files.map(url => 
+          `<img src="${url}" class="delivery-photo" alt="Bon livraison" title="Bon de livraison" loading="lazy" onerror="this.style.display='none'">`
+        ).join('');
+      }
+      
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${formatDate(intervention.date)}</td>
+        <td>${vehicle.immatriculation} - ${vehicle.modele}</td>
+        <td>${intervention.type}</td>
+        <td>${intervention.mecaniciens.join(', ')}</td>
+        <td>${deliveryPhotosHtml}</td>
+        <td><span class="status-badge status-${intervention.statut}">${intervention.statut}</span></td>
+        <td>${intervention.observations || ''}</td>
+      `;
+      container.appendChild(tr);
+    });
+  }
+
+  function resetJournal() {
+    document.getElementById('journal-date').value = '';
+    document.getElementById('journal-type').value = '';
+    document.getElementById('journal-statut').value = '';
+    updateJournalComplet();
+  }
+
   async function editVehicle(id){
     const v = vehicles.find(x=>x.id===id);
     if(!v) return;
@@ -2325,10 +2677,9 @@
       vehicles = vehicles.filter(v=>v.id!==id);
       interventions = interventions.filter(i=>i.vehicule_id!==id);
 
-      const stockIndex = garageStock.indexOf(id);
+      const stockIndex = garageStock.findIndex(item => item.vehicle_id === id);
       if (stockIndex > -1) {
         garageStock.splice(stockIndex, 1);
-        saveGarageStock();
       }
 
       updateUI();
@@ -2352,19 +2703,212 @@
       interventions = interventions.filter(i=>i.id!==id);
       
       if (intervention && intervention.statut === 'termine') {
-        const stockIndex = garageStock.indexOf(intervention.vehicule_id);
+        const stockIndex = garageStock.findIndex(item => item.vehicle_id === intervention.vehicule_id);
         if (stockIndex > -1) {
           garageStock.splice(stockIndex, 1);
-          saveGarageStock();
         }
       }
       
       updateUI();
-      updateGarageStock();
     }
   }
 
-  // notifications
+  function editIntervention(id){
+    const intervention = interventions.find(i => i.id === id);
+    if(!intervention) return;
+    
+    currentEditingInterventionId = id;
+    deliveryFiles = [];
+    
+    document.getElementById('edit-intervention-id').value = id;
+    document.getElementById('edit-vehicule-intervention').value = intervention.vehicule_id;
+    document.getElementById('edit-date-intervention').value = intervention.date;
+    document.getElementById('edit-type-intervention').value = intervention.type;
+    document.getElementById('edit-pieces').value = intervention.pieces || '';
+    document.getElementById('edit-statut').value = intervention.statut;
+    document.getElementById('edit-observations').value = intervention.observations || '';
+    
+    const previewContainer = document.getElementById('edit-delivery-files-preview');
+    previewContainer.innerHTML = '';
+    if (intervention.delivery_files && intervention.delivery_files.length > 0) {
+      intervention.delivery_files.forEach((url, index) => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'delivery-file-item';
+        fileItem.innerHTML = `
+          <img src="${url}" class="delivery-file-preview" alt="Bon de livraison">
+          <div class="delivery-file-name">Bon de livraison ${index + 1}</div>
+          <div class="remove-delivery-file" onclick="removeExistingDeliveryFile('${id}', ${index})">
+            <i class="fas fa-times"></i> Supprimer
+          </div>
+        `;
+        previewContainer.appendChild(fileItem);
+      });
+    }
+    
+    const mecaniciensSelect = document.getElementById('edit-mecaniciens');
+    Array.from(mecaniciensSelect.options).forEach(option => {
+      option.selected = intervention.mecaniciens.includes(option.text);
+    });
+    
+    document.getElementById('intervention-modal').style.display = 'flex';
+  }
+
+  function resetVehicleForm() {
+    document.getElementById('vehicle-form').reset();
+    delete document.getElementById('vehicle-form').dataset.editingId;
+    document.querySelector('#vehicle-form .btn-text').textContent = 'Enregistrer le véhicule';
+    document.getElementById('cancel-edit-vehicle').style.display = 'none';
+    document.getElementById('photo-preview').style.display = 'none';
+  }
+
+  function performSearch(){
+    const immatriculation = (document.getElementById('search-immatriculation').value || '').toLowerCase();
+    const modele = (document.getElementById('search-modele').value || '').toLowerCase();
+    const couleur = (document.getElementById('search-couleur').value || '').toLowerCase();
+    const date = document.getElementById('search-date').value;
+    const type = document.getElementById('search-type').value;
+    const statut = document.getElementById('search-statut').value;
+
+    let results = vehicles.slice();
+
+    if(immatriculation) results = results.filter(v => v.immatriculation.toLowerCase().includes(immatriculation));
+    if(modele) results = results.filter(v => v.modele.toLowerCase().includes(modele));
+    if(couleur) results = results.filter(v => v.couleur.toLowerCase().includes(couleur));
+
+    if(date || type || statut) {
+      const ids = interventions.filter(i => {
+        let match = true;
+        if(date) match = match && i.date === date;
+        if(type) match = match && i.type === type;
+        if(statut) match = match && i.statut === statut;
+        return match;
+      }).map(i => i.vehicule_id);
+      results = results.filter(v => ids.includes(v.id));
+    }
+
+    const resultsContainer = document.getElementById('search-results');
+    const resultsCount = document.getElementById('search-results-count');
+    resultsContainer.innerHTML = '';
+    
+    if(results.length === 0){
+      resultsContainer.innerHTML = '<tr><td colspan="8" style="text-align:center">Aucun résultat trouvé</td></tr>';
+      resultsCount.innerHTML = '<p>Aucun résultat trouvé</p>';
+      return;
+    }
+
+    resultsCount.innerHTML = '<p>' + results.length + ' résultat(s) trouvé(s)</p>';
+
+    results.forEach(vehicle => {
+      const lastIntervention = interventions
+        .filter(i => i.vehicule_id === vehicle.id)
+        .sort((a,b)=> new Date(b.date) - new Date(a.date))[0];
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><img src="${vehicle.photo}" class="vehicle-photo" alt="photo" loading="lazy" onerror="this.src='https://via.placeholder.com/100x70?text=Vehicle'"></td>
+        <td>${vehicle.immatriculation}</td>
+        <td>${vehicle.modele}</td>
+        <td>${vehicle.couleur}</td>
+        <td>${vehicle.proprietaire || ''}</td>
+        <td>${lastIntervention ? lastIntervention.type + ' (' + formatDate(lastIntervention.date) + ')' : 'Aucune'}</td>
+        <td>${lastIntervention ? '<span class="status-badge status-' + lastIntervention.statut + '">' + lastIntervention.statut + '</span>' : 'N/A'}</td>
+        <td class="action-buttons">
+          <button class="btn-edit" onclick="editVehicle('${vehicle.id}')">Modifier</button>
+          <button class="btn-delete" onclick="deleteVehicle('${vehicle.id}')">Supprimer</button>
+          <button class="btn-details" onclick="showVehicleDetails('${vehicle.id}')">Détails</button>
+        </td>
+      `;
+      resultsContainer.appendChild(tr);
+    });
+  }
+
+  function resetSearch(){
+    document.getElementById('search-immatriculation').value = '';
+    document.getElementById('search-modele').value = '';
+    document.getElementById('search-couleur').value = '';
+    document.getElementById('search-date').value = '';
+    document.getElementById('search-type').value = '';
+    document.getElementById('search-statut').value = '';
+    document.getElementById('search-results').innerHTML = '';
+    document.getElementById('search-results-count').innerHTML = '';
+  }
+
+  function performGlobalSearch(query){
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      if(!query || query.length < 2) return;
+      query = query.toLowerCase();
+
+      const results = [
+        ...vehicles.filter(v => v.immatriculation.toLowerCase().includes(query) || v.modele.toLowerCase().includes(query) || (v.proprietaire || '').toLowerCase().includes(query)),
+        ...interventions.filter(i => i.immatriculation.toLowerCase().includes(query) || (i.type || '').toLowerCase().includes(query) || i.mecaniciens.some(m => m.toLowerCase().includes(query))).map(i => vehicles.find(v=>v.id===i.vehicule_id)).filter(Boolean)
+      ];
+
+      const unique = [...new Map(results.map(r => [r.id, r])).values()];
+      if(unique.length) showNotification(unique.length + ' résultat(s) trouvé(s) pour "' + query + '"');
+    }, 300);
+  }
+
+  function showVehicleDetails(vehicleId) {
+    const vehicle = vehicles.find(v => v.id === vehicleId);
+    if (!vehicle) return;
+    
+    const interventionsForVehicle = interventions.filter(i => i.vehicule_id === vehicleId)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    let detailsHtml = `
+      <div class="vehicle-details-grid">
+        <div>
+          <img src="${vehicle.photo}" class="vehicle-details-photo" alt="Photo du véhicule" onerror="this.src='https://via.placeholder.com/300x200?text=Vehicle'">
+        </div>
+        <div>
+          <h3>Informations du véhicule</h3>
+          <p><strong>Immatriculation:</strong> ${vehicle.immatriculation}</p>
+          <p><strong>Modèle:</strong> ${vehicle.modele}</p>
+          <p><strong>Couleur:</strong> ${vehicle.couleur}</p>
+          <p><strong>Propriétaire:</strong> ${vehicle.proprietaire || 'Non renseigné'}</p>
+          <p><strong>Téléphone:</strong> ${vehicle.telephone || 'Non renseigné'}</p>
+        </div>
+      </div>
+    `;
+    
+    if (interventionsForVehicle.length > 0) {
+      detailsHtml += `
+        <h3>Historique des interventions (${interventionsForVehicle.length})</h3>
+        <div class="intervention-history">
+      `;
+      
+      interventionsForVehicle.forEach(intervention => {
+        const statusClass = intervention.statut.replace('-', ' ');
+        detailsHtml += `
+          <div class="intervention-item ${statusClass}">
+            <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 8px;">
+              <div>
+                <strong>${intervention.type}</strong> - ${formatDate(intervention.date)}
+              </div>
+              <span class="status-badge status-${intervention.statut}">${intervention.statut}</span>
+            </div>
+            <p><strong>Mécaniciens:</strong> ${intervention.mecaniciens.join(', ')}</p>
+            ${intervention.pieces ? `<p><strong>Pièces utilisées:</strong> ${intervention.pieces}</p>` : ''}
+            ${intervention.observations ? `<p><strong>Observations:</strong> ${intervention.observations}</p>` : ''}
+            <div style="margin-top: 10px;">
+              <button class="btn-edit btn-sm" onclick="editIntervention('${intervention.id}'); closeModal('vehicle-details-modal')">
+                <i class="fas fa-edit"></i> Modifier
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      
+      detailsHtml += `</div>`;
+    } else {
+      detailsHtml += '<p style="text-align: center; padding: 20px;">Aucune intervention enregistrée pour ce véhicule.</p>';
+    }
+    
+    document.getElementById('vehicle-details-content').innerHTML = detailsHtml;
+    document.getElementById('vehicle-details-modal').style.display = 'flex';
+  }
+
   function showNotification(message, type="success"){
     const note = document.getElementById('notification');
     note.textContent = message;
@@ -2377,7 +2921,29 @@
     return d.toLocaleDateString('fr-FR');
   }
 
-  // expose some functions for inline onclick
+  let searchTimeout;
+
+  // ==================== INITIALISATION ====================
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initApp();
+    loadData();
+    setupEventListeners();
+  });
+
+  // ==================== EXPOSITION GLOBALE ====================
+
+  window.switchTab = switchTab;
+  window.removeFromStock = removeFromStock;
+  window.openStockManagement = openStockManagement;
+  window.confirmStockAction = confirmStockAction;
+  window.showStockHistory = showStockHistory;
+  window.showVehicleStockHistory = showVehicleStockHistory;
+  window.exportStockReport = exportStockReport;
+  window.filterStock = filterStock;
+  window.resetStockFilter = resetStockFilter;
+  window.setStockView = setStockView;
+
   window.editVehicle = editVehicle;
   window.deleteVehicle = deleteVehicle;
   window.editIntervention = editIntervention;
