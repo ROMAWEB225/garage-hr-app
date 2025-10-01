@@ -966,12 +966,9 @@
     const supabaseUrl = window.VITE_SUPABASE_URL || 'https://xexmwdaeoxizvqecrmlo.supabase.co';
     const supabaseKey = window.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleG13ZGFlb3hpenZxZWNybWxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2OTg5OTAsImV4cCI6MjA3NDI3NDk5MH0.nrMn4X0KFJISudffGDJZ0SM7XxKD2wOG2xOUMNsnWQo';
     
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Configuration Supabase manquante');
-      showNotification("Erreur de configuration de l'application", "error");
-      return null;
-    }
-    
+    console.log('Supabase URL:', supabaseUrl);
+    console.log('Supabase Key:', supabaseKey ? '✓ Présente' : '✗ Manquante');
+  
     return { supabaseUrl, supabaseKey };
   };
 
